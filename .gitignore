@@ -5,6 +5,10 @@ log
 *pb.cc
 *pb.h
 .idea
+_skbuild
+dist
+build*
+*.egg-info
 cmake-build*
 test_config.hpp
 include/DartRobots/Config.hpp
