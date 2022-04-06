@@ -1,0 +1,11 @@
+#ifndef DARTROBOTS_CONFIG_HPP
+#define DARTROBOTS_CONFIG_HPP
+
+namespace DartRobots::Config
+{
+static constexpr auto install_terrain_path = "${CMAKE_INSTALL_FULL_DATADIR}/${CMAKE_PROJECT_NAME}/resources/terrain/";
+static constexpr auto install_robots_path = "${CMAKE_INSTALL_FULL_DATADIR}/${CMAKE_PROJECT_NAME}/resources/robots/";
+}
+
+
+#endif // DARTROBOTS_CONFIG_HPP

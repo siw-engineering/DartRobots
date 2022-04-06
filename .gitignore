@@ -1,0 +1,41 @@
+.vscode/c_cpp_properties.json
+.vscode/settings.json
+build
+log
+*pb.cc
+*pb.h
+.idea
+cmake-build*
+test_config.hpp
+config.hpp
+
+### Latex stuff ###
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*-blx.aux
+*-blx.bib
+*.run.xml
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+
+__pycache__
