@@ -7,7 +7,7 @@ log
 .idea
 cmake-build*
 test_config.hpp
-config.hpp
+include/DartRobots/Config.hpp
 
 ### Latex stuff ###
 ## Core latex/pdflatex auxiliary files:
