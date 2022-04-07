@@ -93,4 +93,17 @@ Eigen::Vector3d MiniCheetah::GetWorldLinAcc() const
 {
     return impl_->GetWorldLinAcc();
 }
+std::string MiniCheetah::AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
+                                 const std::string &name)
+{
+    return impl_->AddBall(translation, color, radius, name);
+}
+bool MiniCheetah::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation)
+{
+    return impl_->SetBallTranslation(name, translation);
+}
+void MiniCheetah::DeleteBall(const std::string &name)
+{
+    impl_->DeleteBall(name);
+}
 } // namespace DartRobots

@@ -74,5 +74,11 @@ PYBIND11_MODULE(MiniCheetahPy, m)
         .def("get_world_ang_vel", &MiniCheetah::GetWorldAngVel,
              "Gets the angular velocity (rad/s) of the robot in world frame")
         .def("get_world_lin_acc", &MiniCheetah::GetWorldLinAcc,
-             "Gets the linear acceleration (m/s^2) of the robot in world frame");
+             "Gets the linear acceleration (m/s^2) of the robot in world frame")
+        .def("add_ball", &MiniCheetah::AddBall,
+             "Adds a ball relative to robot geometric centre, returns name of ball stored in sim",
+             py::arg("translation"), py::arg("color"), py::arg("radius"), py::arg("name"))
+        .def("set_ball_translation", &MiniCheetah::SetBallTranslation, "Sets translation of a ball using its name",
+             py::arg("name"), py::arg("translation"))
+        .def("delete_ball", &MiniCheetah::DeleteBall, "Deletes a ball using its name", py::arg("name"));
 }

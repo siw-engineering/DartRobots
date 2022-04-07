@@ -1,6 +1,6 @@
 #include "MiniCheetahImpl.hpp"
-#include "Helpers.hpp"
 #include "DartRobots/Config.hpp"
+#include "Helpers.hpp"
 #include <chrono>
 #include <dart/collision/ode/ode.hpp>
 #include <dart/constraint/constraint.hpp>
@@ -351,5 +351,31 @@ void MiniCheetah::Impl::UpdateContactData() const
     footContactNormals_ = footContactNormals;
     footContactForces_ = footContactForces;
     contactDataDirty_ = false;
+}
+
+std::string MiniCheetah::Impl::AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
+                                       const std::string &name)
+{
+    auto tf = Eigen::Isometry3d::Identity();
+    tf.translate(translation);
+    auto frame = std::make_shared<dart::dynamics::SimpleFrame>(robot_->getBodyNode(0), name, tf);
+    ShapePtr ball(new SphereShape(radius));
+    frame->setShape(ball);
+    frame->getVisualAspect(true)->setColor(color);
+    return world_->addSimpleFrame(frame);
+}
+bool MiniCheetah::Impl::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation)
+{
+    auto frame = world_->getSimpleFrame(name);
+    if (frame == nullptr)
+        return false;
+    frame->setTranslation(translation);
+}
+void MiniCheetah::Impl::DeleteBall(const std::string &name)
+{
+    auto frame = world_->getSimpleFrame(name);
+    if (frame == nullptr)
+        return;
+    world_->removeSimpleFrame(frame);
 }
 } // namespace DartRobots

@@ -34,6 +34,10 @@ class MiniCheetah::Impl
     [[nodiscard]] Eigen::Vector3d GetWorldLinVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldAngVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldLinAcc() const;
+    std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
+                        const std::string &name = "marker");
+    bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation);
+    void DeleteBall(const std::string &name);
 
   private:
     void UpdateContactData() const;

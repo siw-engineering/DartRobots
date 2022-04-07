@@ -66,6 +66,7 @@ target_include_directories(MiniCheetah PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 add_subdirectory(python)
+add_subdirectory(samples)
 
 install(
         TARGETS MiniCheetah EXPORT MiniCheetahConfig
