@@ -34,6 +34,10 @@ class MiniCheetah
     [[nodiscard]] Eigen::Matrix<double, 12, 1> GetJointViscousFriction() const;
     [[nodiscard]] Eigen::Matrix<double, 4, 1> GetFootFriction() const;
 
+    /**
+     * Gets absolute foot position in world frame, note not to use this wrongly
+     * @return
+     */
     [[nodiscard]] Eigen::Matrix<double, 3, 4> GetFootPositions() const;
 
     [[nodiscard]] Eigen::Matrix<bool, 4, 1> GetFootContactStates() const;
@@ -48,7 +52,7 @@ class MiniCheetah
     [[nodiscard]] Eigen::Vector3d GetWorldLinAcc() const;
     std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
                         const std::string &name = "marker");
-    bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation);
+    bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame="");
     void DeleteBall(const std::string &name);
 
   private:

@@ -364,12 +364,25 @@ std::string MiniCheetah::Impl::AddBall(const Eigen::Vector3d &translation, const
     frame->getVisualAspect(true)->setColor(color);
     return world_->addSimpleFrame(frame);
 }
-bool MiniCheetah::Impl::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation)
+bool MiniCheetah::Impl::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame)
 {
-    auto frame = world_->getSimpleFrame(name);
-    if (frame == nullptr)
+
+    auto simpleFrame = world_->getSimpleFrame(name);
+    if (simpleFrame == nullptr)
         return false;
-    frame->setTranslation(translation);
+    Frame *translationFrame;
+    if(frame.empty()){
+        translationFrame = Frame::World();
+    }
+    else{
+        translationFrame = robot_->getBodyNode(frame);
+    }
+    if(translationFrame == nullptr){
+        spdlog::info("SetBallTranslation failed, maybe frame name does not name a robot link");
+        return false;
+    }
+    simpleFrame->setTranslation(translation, translationFrame);
+    return true;
 }
 void MiniCheetah::Impl::DeleteBall(const std::string &name)
 {

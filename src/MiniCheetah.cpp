@@ -98,9 +98,9 @@ std::string MiniCheetah::AddBall(const Eigen::Vector3d &translation, const Eigen
 {
     return impl_->AddBall(translation, color, radius, name);
 }
-bool MiniCheetah::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation)
+bool MiniCheetah::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame)
 {
-    return impl_->SetBallTranslation(name, translation);
+    return impl_->SetBallTranslation(name, translation, frame);
 }
 void MiniCheetah::DeleteBall(const std::string &name)
 {

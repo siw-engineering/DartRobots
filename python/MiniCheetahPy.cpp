@@ -79,6 +79,6 @@ PYBIND11_MODULE(MiniCheetahPy, m)
              "Adds a ball relative to robot geometric centre, returns name of ball stored in sim",
              py::arg("translation"), py::arg("color"), py::arg("radius"), py::arg("name"))
         .def("set_ball_translation", &MiniCheetah::SetBallTranslation, "Sets translation of a ball using its name",
-             py::arg("name"), py::arg("translation"))
+             py::arg("name"), py::arg("translation"), py::arg("frame"))
         .def("delete_ball", &MiniCheetah::DeleteBall, "Deletes a ball using its name", py::arg("name"));
 }

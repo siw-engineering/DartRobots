@@ -7,8 +7,8 @@ int main()
 {
     auto robot = DartRobots::MiniCheetah();
     auto startTime = steady_clock::now();
-    auto markerName = robot.AddBall(Eigen::Vector3d(0.19, 0.11, -0.2), Eigen::Vector3d(0.9, 0.0, 0.0), 0.05);
-    auto markerName2 = robot.AddBall(Eigen::Vector3d(0.19, -0.11, -0.2), Eigen::Vector3d(0.9, 0.0, 0.0), 0.05);
+    auto markerName = robot.AddBall(Eigen::Vector3d(0.19, 0.11, -0.29), Eigen::Vector3d(0.9, 0.0, 0.0), 0.05);
+    auto markerName2 = robot.AddBall(Eigen::Vector3d(0.19, -0.11, -0.29), Eigen::Vector3d(0.9, 0.0, 0.0), 0.05);
     std::cout << "Add ball with marker name: " << markerName << std::endl;
     std::cout << "Add ball with marker name: " << markerName2 << std::endl;
     robot.SaveState(0);
