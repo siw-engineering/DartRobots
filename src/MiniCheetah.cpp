@@ -21,6 +21,10 @@ void MiniCheetah::Render()
 {
     impl_->Render();
 }
+void MiniCheetah::Reset()
+{
+    impl_->Reset();
+}
 void MiniCheetah::SaveState(unsigned int checkpointId)
 {
     impl_->SaveState(checkpointId);

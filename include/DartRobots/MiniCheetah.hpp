@@ -22,6 +22,7 @@ class MiniCheetah
     ~MiniCheetah();
     void Step(uint64_t iter);
     void Render();
+    void Reset();
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
     void SetJointCommands(const Eigen::Matrix<double, 12, 1> &commands);

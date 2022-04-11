@@ -16,6 +16,7 @@ class MiniCheetah::Impl
     void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
     void Step(uint64_t iter);
     void Render();
+    void Reset();
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
     void SetJointCoulombFriction(Eigen::Ref<const Eigen::Matrix<double, 12, 1>> val);

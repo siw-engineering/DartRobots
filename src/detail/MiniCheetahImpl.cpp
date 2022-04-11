@@ -193,6 +193,16 @@ void MiniCheetah::Impl::Render()
     node_->simulate(true);
 }
 
+void MiniCheetah::Impl::Reset()
+{
+    coulombFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
+    viscousFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
+    footFriction_ = Eigen::Matrix<double, 4, 1>::Zero();
+    simTimeElapsed_ = 0.0;
+    realTimeElapsed_ = 0.0;
+    contactDataDirty_ = true;
+}
+
 void MiniCheetah::Impl::SaveState(unsigned checkpointId)
 {
     configMap_[checkpointId] = robot_->getConfiguration();
