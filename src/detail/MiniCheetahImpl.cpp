@@ -197,7 +197,10 @@ void MiniCheetah::Impl::Reset()
 {
     coulombFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
     viscousFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
-    footFriction_ = Eigen::Matrix<double, 4, 1>::Zero();
+    for (int i = 0; i < 4; i++)
+    {
+        footFriction_(i) = legNodes_.at(i)->getFrictionCoeff();
+    }
     simTimeElapsed_ = 0.0;
     realTimeElapsed_ = 0.0;
     contactDataDirty_ = true;
@@ -374,20 +377,23 @@ std::string MiniCheetah::Impl::AddBall(const Eigen::Vector3d &translation, const
     frame->getVisualAspect(true)->setColor(color);
     return world_->addSimpleFrame(frame);
 }
-bool MiniCheetah::Impl::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame)
+bool MiniCheetah::Impl::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation,
+                                           const std::string &frame)
 {
-
     auto simpleFrame = world_->getSimpleFrame(name);
     if (simpleFrame == nullptr)
         return false;
     Frame *translationFrame;
-    if(frame.empty()){
+    if (frame.empty())
+    {
         translationFrame = Frame::World();
     }
-    else{
+    else
+    {
         translationFrame = robot_->getBodyNode(frame);
     }
-    if(translationFrame == nullptr){
+    if (translationFrame == nullptr)
+    {
         spdlog::info("SetBallTranslation failed, maybe frame name does not name a robot link");
         return false;
     }
