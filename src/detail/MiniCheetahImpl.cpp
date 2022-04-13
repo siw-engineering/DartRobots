@@ -315,6 +315,11 @@ Eigen::Quaterniond MiniCheetah::Impl::GetOrientation() const
 {
     return Eigen::Quaterniond(robot_->getBodyNode(0)->getWorldTransform().rotation());
 }
+
+Eigen::Vector3d MiniCheetah::Impl::GetBodyPosition() const
+{
+    return robot_->getBodyNode(0)->getCOM();
+}
 Eigen::Vector3d MiniCheetah::Impl::GetWorldLinVel() const
 {
     return robot_->getBodyNode(0)->getLinearVelocity();

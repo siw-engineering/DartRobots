@@ -70,6 +70,8 @@ PYBIND11_MODULE(MiniCheetahPy, m)
             "get_orientation",
             [](const MiniCheetah &r) { return Eigen::Matrix<double, 4, 1>{r.GetOrientation().coeffs()}; },
             "Gets the orientation of the robot in quaternion in world frame, (x,y,z,w)")
+        .def("get_body_pos", &MiniCheetah::GetBodyPosition,
+             "Gets the position of the body centre of the robot in world frame (unit: m)")
         .def("get_world_lin_vel", &MiniCheetah::GetWorldLinVel,
              "Gets the linear velocity (m/s) of the robot in world frame")
         .def("get_world_ang_vel", &MiniCheetah::GetWorldAngVel,

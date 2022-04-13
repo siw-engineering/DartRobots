@@ -32,6 +32,7 @@ class MiniCheetah::Impl
     Eigen::Matrix<double, 12, 1> GetJointPositions() const;
     Eigen::Matrix<double, 12, 1> GetJointVelocities() const;
     [[nodiscard]] Eigen::Quaterniond GetOrientation() const;
+    [[nodiscard]] Eigen::Vector3d GetBodyPosition() const;
     [[nodiscard]] Eigen::Vector3d GetWorldLinVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldAngVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldLinAcc() const;

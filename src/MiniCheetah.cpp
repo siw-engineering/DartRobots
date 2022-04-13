@@ -85,6 +85,10 @@ Eigen::Quaterniond MiniCheetah::GetOrientation() const
 {
     return impl_->GetOrientation();
 }
+Eigen::Vector3d MiniCheetah::GetBodyPosition() const
+{
+    return impl_->GetBodyPosition();
+}
 Eigen::Vector3d MiniCheetah::GetWorldLinVel() const
 {
     return impl_->GetWorldLinVel();
