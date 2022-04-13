@@ -23,6 +23,7 @@ int main()
             robot.Render();
         }
         robot.LoadState(0);
+        robot.Reset();
         robot.DeleteBall(markerName2);
     }
     auto endTime = steady_clock::now();

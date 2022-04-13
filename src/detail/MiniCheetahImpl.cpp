@@ -203,6 +203,8 @@ void MiniCheetah::Impl::Reset()
     }
     simTimeElapsed_ = 0.0;
     realTimeElapsed_ = 0.0;
+    world_->reset();
+    startTime_ = steady_clock::now();
     contactDataDirty_ = true;
 }
 
