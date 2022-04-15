@@ -1,4 +1,5 @@
 #include "DartRobots/MiniCheetah.hpp"
+#include "DartRobots/World.hpp"
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -8,9 +9,9 @@
 namespace py = pybind11;
 using namespace DartRobots;
 
-PYBIND11_MODULE(MiniCheetahPy, m)
+PYBIND11_MODULE(DartRobotsPy, m)
 {
-    py::class_<MiniCheetahConfig>(m, "Config")
+    py::class_<MiniCheetahConfig>(m, "MiniCheetahConfig")
         .def(py::init<>())
         .def_readwrite("spawn_pos", &MiniCheetahConfig::spawnPos)
         .def_readwrite("spawn_orientation", &MiniCheetahConfig::spawnOrientation)
@@ -30,11 +31,22 @@ PYBIND11_MODULE(MiniCheetahPy, m)
                                          .spawnJointPos = t[2].cast<Eigen::Matrix<double, 12, 1>>()};
             }));
 
-    py::class_<MiniCheetah>(m, "MiniCheetah")
+    py::class_<World>(m, "World")
+        .def(py::init<>())
+        .def("step", &World::Step, py::arg("iters"), "Steps the simulator N times")
+        .def("reset", &World::Reset, "Resets the simulator and robots inside")
+        .def("render", &World::Render, "Draws the current frame")
+        .def("set_robot", &World::SetRobot, py::arg("robot"), "Sets the robot")
+        .def("change_terrain", &World::ChangeTerrain, "Change the terrain")
+        .def("add_ball", &World::AddBall, "Adds a ball, returns name of ball stored in sim", py::arg("translation"),
+             py::arg("color"), py::arg("radius"), py::arg("name"))
+        .def("set_ball_translation", &World::SetBallTranslation, "Sets translation of a ball using its name",
+             py::arg("name"), py::arg("translation"))
+        .def("delete_ball", &World::DeleteBall, "Deletes a ball using its name", py::arg("name"));
+
+    py::class_<MiniCheetah, std::shared_ptr<MiniCheetah>>(m, "MiniCheetah")
         .def(py::init<>())
         .def(py::init<MiniCheetahConfig>())
-        .def("step", &MiniCheetah::Step, "Steps the simulator N times")
-        .def("render", &MiniCheetah::Render, "Draws the current frame")
         .def("reset", &MiniCheetah::Reset, "Resets the robot")
         .def("save_state", &MiniCheetah::SaveState, "Saves the current robot state")
         .def("load_state", &MiniCheetah::LoadState, "Loads the robot state to the specified checkpoint id")
@@ -77,11 +89,5 @@ PYBIND11_MODULE(MiniCheetahPy, m)
         .def("get_world_ang_vel", &MiniCheetah::GetWorldAngVel,
              "Gets the angular velocity (rad/s) of the robot in world frame")
         .def("get_world_lin_acc", &MiniCheetah::GetWorldLinAcc,
-             "Gets the linear acceleration (m/s^2) of the robot in world frame")
-        .def("add_ball", &MiniCheetah::AddBall,
-             "Adds a ball relative to robot geometric centre, returns name of ball stored in sim",
-             py::arg("translation"), py::arg("color"), py::arg("radius"), py::arg("name"))
-        .def("set_ball_translation", &MiniCheetah::SetBallTranslation, "Sets translation of a ball using its name",
-             py::arg("name"), py::arg("translation"), py::arg("frame"))
-        .def("delete_ball", &MiniCheetah::DeleteBall, "Deletes a ball using its name", py::arg("name"));
+             "Gets the linear acceleration (m/s^2) of the robot in world frame");
 }

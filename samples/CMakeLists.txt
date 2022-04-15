@@ -1,2 +1,0 @@
-add_executable(MiniCheetahSample MiniCheetah.cpp)
-target_link_libraries(MiniCheetahSample PRIVATE MiniCheetah)
