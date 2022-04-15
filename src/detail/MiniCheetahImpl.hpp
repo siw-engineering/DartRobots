@@ -14,9 +14,10 @@ class MiniCheetah::Impl
   public:
     explicit Impl(MiniCheetahConfig config);
     void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
-    void Step(uint64_t iter);
-    void Render();
     void Reset();
+    void SetContactDirty();
+    void SetWorld(dart::simulation::ConstWorldPtr world);
+    dart::dynamics::SkeletonPtr GetSkeleton() const;
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
     void SetJointCoulombFriction(Eigen::Ref<const Eigen::Matrix<double, 12, 1>> val);
@@ -36,24 +37,15 @@ class MiniCheetah::Impl
     [[nodiscard]] Eigen::Vector3d GetWorldLinVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldAngVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldLinAcc() const;
-    std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
-                        const std::string &name = "marker");
-    bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame="");
-    void DeleteBall(const std::string &name);
 
   private:
     void UpdateContactData() const;
     MiniCheetahConfig config_;
 
-    dart::simulation::WorldPtr world_;
+    dart::simulation::ConstWorldPtr world_;
     std::vector<dart::dynamics::Joint *> revoluteJoints_{};
     std::shared_ptr<dart::dynamics::Skeleton> robot_{nullptr};
-    dart::dynamics::SkeletonPtr ground_;
 
-    ::osg::ref_ptr<dart::gui::osg::WorldNode> node_{nullptr};
-    std::unique_ptr<dart::gui::osg::ImGuiViewer> viewer_{nullptr};
-
-    std::chrono::time_point<std::chrono::steady_clock> startTime_{};
 
     std::unordered_map<const dart::dynamics::Shape *, uint32_t> collShapeLegIndexMap_{};
     std::array<dart::dynamics::BodyNode *, 4> legNodes_{};
@@ -69,9 +61,6 @@ class MiniCheetah::Impl
     mutable Eigen::Matrix<bool, 4, 1> footContactStates_{};
     mutable Eigen::Matrix<double, 3, 4> footContactForces_{Eigen::Matrix<double, 3, 4>::Zero()};
     mutable Eigen::Matrix<double, 3, 4> footContactNormals_{Eigen::Matrix<double, 3, 4>::Zero()};
-
-    double simTimeElapsed_{0.0};
-    double realTimeElapsed_{0.0};
 };
 
 } // namespace DartRobots

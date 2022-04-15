@@ -4,12 +4,6 @@
     <material name="darkgray">
         <color rgba=".2 .2 .2 1"/>
     </material>
-    <link name="world"/>
-    <joint name="world_joint" type="fixed">
-        <origin rpy="0.3 0 0" xyz="0.0 0.0 0.6"/>
-        <parent link="world"/>
-        <child link="body"/>
-    </joint>
     <link name="body">
         <inertial>
             <mass value="3.3"/>

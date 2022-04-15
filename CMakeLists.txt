@@ -55,7 +55,9 @@ if (PACKAGE_PYTHON)
     set(CMAKE_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATADIR_TEMP})
 endif ()
 
-add_library(MiniCheetah src/MiniCheetah.cpp src/detail/MiniCheetahImpl.cpp src/detail/Helpers.cpp)
+add_library(MiniCheetah src/World.cpp src/detail/WorldImpl.cpp
+        src/MiniCheetah.cpp src/detail/MiniCheetahImpl.cpp
+        src/detail/Helpers.cpp)
 set_target_properties(MiniCheetah PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION TRUE
         POSITION_INDEPENDENT_CODE ON)

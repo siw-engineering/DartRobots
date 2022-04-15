@@ -4,6 +4,15 @@
 #include <Eigen/Geometry>
 #include <memory>
 
+namespace dart::simulation
+{
+class World;
+} // namespace dart::simulation
+namespace dart::dynamics
+{
+class Skeleton;
+} // namespace dart::dynamics
+
 namespace DartRobots
 {
 
@@ -20,9 +29,11 @@ class MiniCheetah
   public:
     explicit MiniCheetah(const MiniCheetahConfig &config = MiniCheetahConfig{});
     ~MiniCheetah();
-    void Step(uint64_t iter);
-    void Render();
     void Reset();
+    void SetContactDirty();
+    void SetWorld(std::shared_ptr<dart::simulation::World> world);
+    [[nodiscard]] std::shared_ptr<dart::dynamics::Skeleton> GetSkeleton() const;
+
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
     void SetJointCommands(const Eigen::Matrix<double, 12, 1> &commands);
@@ -52,10 +63,6 @@ class MiniCheetah
     [[nodiscard]] Eigen::Vector3d GetWorldLinVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldAngVel() const;
     [[nodiscard]] Eigen::Vector3d GetWorldLinAcc() const;
-    std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
-                        const std::string &name = "marker");
-    bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame="");
-    void DeleteBall(const std::string &name);
 
   private:
     class Impl;

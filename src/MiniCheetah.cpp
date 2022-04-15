@@ -1,5 +1,6 @@
 #include "DartRobots/MiniCheetah.hpp"
 #include "detail/MiniCheetahImpl.hpp"
+#include <utility>
 
 namespace DartRobots
 {
@@ -13,17 +14,21 @@ void MiniCheetah::SetJointCommands(const Eigen::Matrix<double, 12, 1> &commands)
 {
     impl_->SetJointCommands(commands);
 }
-void MiniCheetah::Step(uint64_t iter)
-{
-    impl_->Step(iter);
-}
-void MiniCheetah::Render()
-{
-    impl_->Render();
-}
 void MiniCheetah::Reset()
 {
     impl_->Reset();
+}
+void MiniCheetah::SetContactDirty()
+{
+    impl_->SetContactDirty();
+}
+void MiniCheetah::SetWorld(std::shared_ptr<dart::simulation::World> world)
+{
+    impl_->SetWorld(std::move(world));
+}
+std::shared_ptr<dart::dynamics::Skeleton> MiniCheetah::GetSkeleton() const
+{
+    return impl_->GetSkeleton();
 }
 void MiniCheetah::SaveState(unsigned int checkpointId)
 {
@@ -100,18 +105,5 @@ Eigen::Vector3d MiniCheetah::GetWorldAngVel() const
 Eigen::Vector3d MiniCheetah::GetWorldLinAcc() const
 {
     return impl_->GetWorldLinAcc();
-}
-std::string MiniCheetah::AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
-                                 const std::string &name)
-{
-    return impl_->AddBall(translation, color, radius, name);
-}
-bool MiniCheetah::SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation, const std::string &frame)
-{
-    return impl_->SetBallTranslation(name, translation, frame);
-}
-void MiniCheetah::DeleteBall(const std::string &name)
-{
-    impl_->DeleteBall(name);
 }
 } // namespace DartRobots
