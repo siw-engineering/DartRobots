@@ -1,14 +1,16 @@
 import time
 import numpy as np
-import DartRobots.DartRobotsPy as B
-
+from DartRobots.DartRobotsPy import World, MiniCheetah, MiniCheetahConfig, get_mini_cheetah_urdf, get_ground_urdf
 
 if __name__ == '__main__':
-    world = B.World()
-    robot = B.MiniCheetah()
+    config = MiniCheetahConfig()
+    config.urdf_path = get_mini_cheetah_urdf()
+    world = World()
+    robot = MiniCheetah(config)
+    world.set_terrain_urdf(get_ground_urdf())
     world.set_robot(robot)
     robot.save_state(0)
-    robot.set_joint_commands(np.full((12,),0.0))
+    robot.set_joint_commands(np.full((12,), 0.0))
     zero_cmd = np.full((12,), 0.0)
     start_time = time.time()
     for _ in range(10):

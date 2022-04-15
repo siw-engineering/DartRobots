@@ -1,5 +1,6 @@
 #include "DartRobots/MiniCheetah.hpp"
 #include "DartRobots/World.hpp"
+#include <filesystem>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -9,16 +10,40 @@
 namespace py = pybind11;
 using namespace DartRobots;
 
+std::string GetMiniCheetahUrdf()
+{
+    py::gil_scoped_acquire acquire;
+    py::object example = py::module::import("DartRobots");
+    std::filesystem::path modulePath(example.attr("__file__").cast<std::string>());
+    auto envPath = modulePath.parent_path().parent_path().parent_path().parent_path().parent_path();
+    auto urdfPath = envPath.string() + "/share/DartRobots/resources/robots/mini_cheetah/mini_cheetah.urdf";
+    return urdfPath;
+}
+
+std::string GetGroundUrdf()
+{
+    py::gil_scoped_acquire acquire;
+    py::object example = py::module::import("DartRobots");
+    std::filesystem::path modulePath(example.attr("__file__").cast<std::string>());
+    auto envPath = modulePath.parent_path().parent_path().parent_path().parent_path().parent_path();
+    auto urdfPath = envPath.string() + "/share/DartRobots/resources/terrain/ground.urdf";
+    return urdfPath;
+}
+
 PYBIND11_MODULE(DartRobotsPy, m)
 {
+    m.def("get_mini_cheetah_urdf", &GetMiniCheetahUrdf,
+          "Gets the mini cheetah urdf path based on module install directory");
+    m.def("get_ground_urdf", &GetGroundUrdf, "Gets the ground urdf path based on module install directory");
     py::class_<MiniCheetahConfig>(m, "MiniCheetahConfig")
         .def(py::init<>())
         .def_readwrite("spawn_pos", &MiniCheetahConfig::spawnPos)
         .def_readwrite("spawn_orientation", &MiniCheetahConfig::spawnOrientation)
         .def_readwrite("spawn_joint_pos", &MiniCheetahConfig::spawnJointPos)
+        .def_readwrite("urdf_path", &MiniCheetahConfig::urdfPath)
         .def(py::pickle(
             [](const MiniCheetahConfig &config) { // __getstate__
-                return py::make_tuple(config.spawnPos, config.spawnOrientation, config.spawnJointPos);
+                return py::make_tuple(config.spawnPos, config.spawnOrientation, config.spawnJointPos, config.urdfPath);
             },
             [](py::tuple t) { // __setstate__
                 if (t.size() != 3)
@@ -28,7 +53,8 @@ PYBIND11_MODULE(DartRobotsPy, m)
                 }
                 return MiniCheetahConfig{.spawnPos = t[0].cast<Eigen::Vector3d>(),
                                          .spawnOrientation = t[1].cast<Eigen::Vector3d>(),
-                                         .spawnJointPos = t[2].cast<Eigen::Matrix<double, 12, 1>>()};
+                                         .spawnJointPos = t[2].cast<Eigen::Matrix<double, 12, 1>>(),
+                                         .urdfPath = t[3].cast<std::string>()};
             }));
 
     py::class_<World>(m, "World")
@@ -37,7 +63,8 @@ PYBIND11_MODULE(DartRobotsPy, m)
         .def("reset", &World::Reset, "Resets the simulator and robots inside")
         .def("render", &World::Render, "Draws the current frame")
         .def("set_robot", &World::SetRobot, py::arg("robot"), "Sets the robot")
-        .def("change_terrain", &World::ChangeTerrain, "Change the terrain")
+        .def("set_terrain_urdf", &World::SetTerrainUrdf, py::arg("urdf_path"),
+             "Sets the terrain using the provided urdf")
         .def("add_ball", &World::AddBall, "Adds a ball, returns name of ball stored in sim", py::arg("translation"),
              py::arg("color"), py::arg("radius"), py::arg("name"))
         .def("set_ball_translation", &World::SetBallTranslation, "Sets translation of a ball using its name",

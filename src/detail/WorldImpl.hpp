@@ -18,6 +18,7 @@ class World::Impl
     void Reset();
     void Render();
     void SetRobot(std::shared_ptr<MiniCheetah> robot);
+    void SetTerrainUrdf(const std::string &urdfPath = "");
     std::string ChangeTerrain();
     std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
                         const std::string &name = "marker");

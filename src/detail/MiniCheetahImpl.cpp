@@ -7,7 +7,6 @@
 #include <dart/dynamics/dynamics.hpp>
 #include <dart/simulation/World.hpp>
 #include <dart/utils/urdf/urdf.hpp>
-#include <filesystem>
 #include <spdlog/spdlog.h>
 #include <utility>
 
@@ -22,29 +21,18 @@ namespace DartRobots
 
 MiniCheetah::Impl::Impl(MiniCheetahConfig config) : config_(std::move(config))
 {
-    const std::string robotName = "mini_cheetah";
-    auto groundUri = dart::common::Uri();
     auto robotUri = dart::common::Uri();
-
-    auto get_exec_path = []() -> std::string {
-        std::array<char, PATH_MAX> buff;
-        ssize_t len = ::readlink("/proc/self/exe", buff.data(), sizeof(buff) - 1);
-        if (len != -1)
-        {
-            buff[len] = '\0';
-            return {buff.data()};
-        }
-        return "";
-    };
-
-    auto exec_path = get_exec_path();
-    const std::string robotUrdfPath = fmt::format("{}{}/{}.urdf", Config::install_robots_path, robotName, robotName);
-    const std::string groundUrdfPath = Config::install_terrain_path + std::string("ground.urdf");
-    auto robotAbsPath = std::filesystem::absolute(robotUrdfPath);
-    auto groundAbsPath = std::filesystem::absolute(Config::install_terrain_path + std::string("ground.urdf"));
-    groundUri.fromRelativeUri(exec_path.c_str(), groundUrdfPath.c_str());
-    robotUri.fromRelativeUri(exec_path.c_str(), robotUrdfPath.c_str());
-    spdlog::debug("ground uri path: {}", groundUri.getPath());
+    if (config_.urdfPath.empty())
+    {
+        const std::string robotName = "mini_cheetah";
+        const std::string robotUrdfPath =
+            fmt::format("{}{}/{}.urdf", Config::install_robots_path, robotName, robotName);
+        robotUri.fromPath(robotUrdfPath);
+    }
+    else
+    {
+        robotUri.fromPath(config_.urdfPath);
+    }
     spdlog::debug("robot uri path: {}", robotUri.getPath());
 
     DartLoader urdfLoader;

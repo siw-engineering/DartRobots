@@ -1,5 +1,5 @@
 add_executable(MiniCheetahExample MiniCheetah.cpp)
-target_link_libraries(MiniCheetahExample PRIVATE MiniCheetah)
+target_link_libraries(MiniCheetahExample PRIVATE MiniCheetah spdlog::spdlog)
 
 
 install(

@@ -10,7 +10,6 @@
 #include <dart/utils/urdf/urdf.hpp>
 #include <filesystem>
 #include <spdlog/spdlog.h>
-#include <unistd.h>
 
 using namespace dart::dynamics;
 using namespace dart::simulation;
@@ -78,37 +77,8 @@ class SomeWidget : public dart::gui::osg::ImGuiWidget
 
 World::Impl::Impl()
 {
-    auto get_exec_path = []() -> std::string {
-        std::array<char, PATH_MAX> buff;
-        ssize_t len = ::readlink("/proc/self/exe", buff.data(), sizeof(buff) - 1);
-        if (len != -1)
-        {
-            buff[len] = '\0';
-            return {buff.data()};
-        }
-        return "";
-    };
-    auto exec_path = get_exec_path();
-    const std::string groundUrdfPath = Config::install_terrain_path + std::string("ground.urdf");
-    auto groundAbsPath = std::filesystem::absolute(Config::install_terrain_path + std::string("ground.urdf"));
-    auto groundUri = dart::common::Uri();
-    groundUri.fromRelativeUri(exec_path.c_str(), groundUrdfPath.c_str());
-    spdlog::debug("ground uri path: {}", groundUri.getPath());
-
-    DartLoader urdfLoader;
-    terrain_ = urdfLoader.parseSkeleton(groundUri);
-    terrain_->disableSelfCollisionCheck();
-    auto groundBodyNodes = terrain_->getBodyNodes();
-    for (auto &bodyNode : groundBodyNodes)
-    {
-        // Set some reasonably high friction coeff here such that we will always be limited by foot friction
-        // Allows for easier friction setting because we only set the foot friction
-        bodyNode->setFrictionCoeff(100);
-    }
-
     world_ = std::make_shared<dart::simulation::World>();
     world_->getConstraintSolver()->setCollisionDetector(dart::collision::OdeCollisionDetector::create());
-    world_->addSkeleton(terrain_);
 
     node_ = ::osg::ref_ptr<dart::gui::osg::WorldNode>(new dart::gui::osg::WorldNode(world_));
     node_->simulate(true);
@@ -210,5 +180,30 @@ void World::Impl::DeleteBall(const std::string &name)
 std::string World::Impl::ChangeTerrain()
 {
     return terrain_->getName();
+}
+void World::Impl::SetTerrainUrdf(const std::string &urdfPath)
+{
+    auto groundUri = dart::common::Uri();
+    if (urdfPath.empty())
+    {
+        const std::string groundUrdfPath = Config::install_terrain_path + std::string("ground.urdf");
+        groundUri.fromPath(groundUrdfPath);
+    }
+    else
+    {
+        groundUri.fromPath(urdfPath);
+    }
+    spdlog::debug("ground uri path: {}", groundUri.getPath());
+    DartLoader urdfLoader;
+    terrain_ = urdfLoader.parseSkeleton(groundUri);
+    terrain_->disableSelfCollisionCheck();
+    auto groundBodyNodes = terrain_->getBodyNodes();
+    for (auto &bodyNode : groundBodyNodes)
+    {
+        // Set some reasonably high friction coeff here such that we will always be limited by foot friction
+        // Allows for easier friction setting because we only set the foot friction
+        bodyNode->setFrictionCoeff(100);
+    }
+    world_->addSkeleton(terrain_);
 }
 } // namespace DartRobots

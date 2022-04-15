@@ -3,6 +3,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <memory>
+#include <string>
 
 namespace dart::simulation
 {
@@ -22,6 +23,7 @@ struct MiniCheetahConfig
     Eigen::Vector3d spawnOrientation{0.0, 0.0, 0.0};
     Eigen::Matrix<double, 12, 1> spawnJointPos{
         (Eigen::Matrix<double, 12, 1>() << 0, -0.8, 1.6, 0, -0.8, 1.6, 0, -0.8, 1.6, 0, -0.8, 1.6).finished()};
+    std::string urdfPath{};
 };
 
 class MiniCheetah

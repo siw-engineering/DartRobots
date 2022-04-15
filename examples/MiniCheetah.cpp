@@ -2,13 +2,16 @@
 #include "DartRobots/World.hpp"
 #include <chrono>
 #include <iostream>
+#include <spdlog/spdlog.h>
 using namespace std::chrono;
 
 int main()
 {
+    spdlog::set_level(spdlog::level::trace);
     auto world = DartRobots::World();
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
         DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 0.5)});
+    world.SetTerrainUrdf();
     world.SetRobot(robot);
     auto startTime = steady_clock::now();
     auto markerName = world.AddBall(Eigen::Vector3d(0.19, 0.11, -0.29), Eigen::Vector3d(0.9, 0.0, 0.0), 0.05);

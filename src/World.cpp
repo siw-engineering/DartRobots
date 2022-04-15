@@ -24,9 +24,9 @@ void World::SetRobot(std::shared_ptr<MiniCheetah> robot)
 {
     impl_->SetRobot(std::move(robot));
 }
-std::string World::ChangeTerrain()
+void World::SetTerrainUrdf(const std::string &urdfPath)
 {
-    return impl_->ChangeTerrain();
+    impl_->SetTerrainUrdf(urdfPath);
 }
 std::string World::AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
                            const std::string &name)

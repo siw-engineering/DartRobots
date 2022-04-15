@@ -15,7 +15,7 @@ class World
     void Reset();
     void Render();
     void SetRobot(std::shared_ptr<MiniCheetah> robot);
-    std::string ChangeTerrain();
+    void SetTerrainUrdf(const std::string &urdfPath = "");
     std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
                         const std::string &name = "marker");
     bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation);
