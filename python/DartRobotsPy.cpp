@@ -10,6 +10,37 @@
 namespace py = pybind11;
 using namespace DartRobots;
 
+void SetLogLevel(int level)
+{
+    switch (level)
+    {
+    case SPDLOG_LEVEL_TRACE:
+        spdlog::set_level(spdlog::level::trace);
+        break;
+    case SPDLOG_LEVEL_DEBUG:
+        spdlog::set_level(spdlog::level::debug);
+        break;
+    case SPDLOG_LEVEL_INFO:
+        spdlog::set_level(spdlog::level::info);
+        break;
+    case SPDLOG_LEVEL_WARN:
+        spdlog::set_level(spdlog::level::warn);
+        break;
+    case SPDLOG_LEVEL_ERROR:
+        spdlog::set_level(spdlog::level::err);
+        break;
+    case SPDLOG_LEVEL_CRITICAL:
+        spdlog::set_level(spdlog::level::critical);
+        break;
+    case SPDLOG_LEVEL_OFF:
+        spdlog::set_level(spdlog::level::off);
+        break;
+    default:
+        spdlog::warn("Invalid log level provided of value {}, expected 0-6", level);
+        break;
+    }
+}
+
 std::string GetMiniCheetahUrdf()
 {
     py::gil_scoped_acquire acquire;
@@ -35,6 +66,15 @@ PYBIND11_MODULE(DartRobotsPy, m)
     m.def("get_mini_cheetah_urdf", &GetMiniCheetahUrdf,
           "Gets the mini cheetah urdf path based on module install directory");
     m.def("get_ground_urdf", &GetGroundUrdf, "Gets the ground urdf path based on module install directory");
+    m.def("set_log_level", &SetLogLevel,
+          "Sets the logging levels (0-6)\n"
+          "/// 0: Trace,\n"
+          "/// 1: Debug,\n"
+          "/// 2: Info,\n"
+          "/// 3: Warn,\n"
+          "/// 4: Error\n"
+          "/// 5: Critical\n"
+          "/// 6: Off\n");
     py::class_<MiniCheetahConfig>(m, "MiniCheetahConfig")
         .def(py::init<>())
         .def_readwrite("spawn_pos", &MiniCheetahConfig::spawnPos)

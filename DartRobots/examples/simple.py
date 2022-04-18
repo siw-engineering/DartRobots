@@ -1,8 +1,10 @@
 import time
 import numpy as np
-from DartRobots.DartRobotsPy import World, MiniCheetah, MiniCheetahConfig, get_mini_cheetah_urdf, get_ground_urdf
+from DartRobots.DartRobotsPy import World, MiniCheetah, MiniCheetahConfig, \
+    get_mini_cheetah_urdf, get_ground_urdf, set_log_level
 
 if __name__ == '__main__':
+    set_log_level(0)
     config = MiniCheetahConfig()
     config.urdf_path = get_mini_cheetah_urdf()
     world = World()
