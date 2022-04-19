@@ -43,6 +43,7 @@ int main()
     robot->SaveState(0);
     for (int i = 0; i < 3; i++)
     {
+
         for (int j = 0; j < 250; j++)
         {
             robot->SetJointCommands(Eigen::Matrix<double, 12, 1>::Zero());
@@ -52,6 +53,16 @@ int main()
         }
         robot->LoadState(0);
         world.Reset();
+
+        // Change terrain
+        if(i % 2)
+            config.terrainType = TerrainType::Hills;
+        else
+            config.terrainType = TerrainType::Plane;
+        config.frequency *= 1.1;
+        terrain = generator.generate(config);
+        world.SetTerrain(terrain);
+
     }
 
     auto endTime = steady_clock::now();
