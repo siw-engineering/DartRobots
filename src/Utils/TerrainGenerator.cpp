@@ -31,12 +31,14 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig& config)
 
     PerlinNoise noiseGenerator;
     std::default_random_engine rd;
-
-    if(config.seed != -1)
-        noiseGenerator  = PerlinNoise(config.seed);
-    rd = std::default_random_engine(config.seed);
     auto randomGen = std::mt19937(rd());
 
+    if(config.seed != -1)
+    {
+        noiseGenerator = PerlinNoise(config.seed);
+        rd = std::default_random_engine(config.seed);
+        randomGen = std::mt19937(rd());
+    }
 
     Terrain terrain;
     float amp, freq, height{0};
@@ -113,9 +115,11 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
     std::default_random_engine rd;
 
     if(config.seed != -1)
+    {
         rd = std::default_random_engine(config.seed);
-    auto randomGen = std::mt19937(rd());
-
+        auto randomGen = std::mt19937(rd());
+    }
+    
     // Loop through the squares with (VerticesPerSegment * VerticesPerSegment) vertices each
     float height;
     for(int i = 0; i < nSegmentsX; ++i)

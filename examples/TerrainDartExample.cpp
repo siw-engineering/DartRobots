@@ -41,7 +41,7 @@ int main()
     world.SetTerrain(terrain);
 
     robot->SaveState(0);
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
 
         for (int j = 0; j < 250; j++)
@@ -57,9 +57,11 @@ int main()
         // Change terrain
         if(i % 2)
             config.terrainType = TerrainType::Hills;
+        else if(i % 3 ==0)
+            config.terrainType = TerrainType::Steps;
         else
             config.terrainType = TerrainType::Plane;
-        config.frequency *= 1.1;
+
         terrain = generator.generate(config);
         world.SetTerrain(terrain);
 
