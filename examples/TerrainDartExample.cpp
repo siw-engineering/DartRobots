@@ -1,4 +1,3 @@
-
 #include "DartRobots/MiniCheetah.hpp"
 #include "DartRobots/World.hpp"
 #include "TerrainGenerator.h"
@@ -16,6 +15,7 @@ int main()
     TerrainGenerator generator;
     TerrainConfig config;
 
+    config.seed = 633;
     config.terrainType = TerrainType::Steps;
     config.xSize = config.ySize = 4.0;
     config.resolution = 0.02;
