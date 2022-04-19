@@ -11,6 +11,62 @@
 #include <filesystem>
 #include <spdlog/spdlog.h>
 
+
+namespace {
+dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain)
+{
+
+    auto config = terrain.config;
+    // create shape of terrrain
+    auto terrainShape = std::make_shared<dart::dynamics::HeightmapShape<float>>();
+    auto scale = Eigen::Vector3f{config.resolution,
+                                 config.resolution,
+                                 1.0};
+
+    auto xs = int(config.xSize / config.resolution) + 1;
+    auto ys = int(config.ySize / config.resolution) + 1;
+
+    terrainShape->setHeightField(xs,
+                                 ys,
+                                 terrain.heights);
+    terrainShape->setScale(scale);
+    // Make skeleton
+    dart::dynamics::SkeletonPtr terrainSkel =
+        dart::dynamics::Skeleton::create();
+
+    dart::dynamics::BodyNodePtr terrainBodyCollision
+        = terrainSkel->createJointAndBodyNodePair<
+                         dart::dynamics::WeldJoint>(nullptr).second;
+
+    Eigen::Isometry3d tf_trans = Eigen::Isometry3d::Identity();
+    tf_trans.translation() = Eigen::Vector3d{0.0, 0.0, 0.0};
+    terrainBodyCollision->getParentJoint()->setTransformFromParentBodyNode(tf_trans);
+
+    dart::dynamics::ShapeNode *shapeNodeCollision = terrainBodyCollision->createShapeNodeWith<
+        dart::dynamics::CollisionAspect,
+        dart::dynamics::DynamicsAspect>(terrainShape);
+
+    shapeNodeCollision->setRelativeTransform(tf_trans);
+
+    dart::dynamics::BodyNodePtr terrainBodyVisual
+        = terrainSkel->createJointAndBodyNodePair<
+                         dart::dynamics::WeldJoint>(nullptr).second;
+
+    Eigen::Isometry3d tf_trans_vis = Eigen::Isometry3d::Identity();
+    tf_trans_vis.translation() = Eigen::Vector3d{-config.xSize/2.0,config.ySize/2.0, 0.0};
+    terrainBodyVisual->getParentJoint()->setTransformFromParentBodyNode(tf_trans_vis);
+
+    dart::dynamics::ShapeNode *shapeNodeVisual = terrainBodyCollision->createShapeNodeWith<
+        dart::dynamics::VisualAspect>(terrainShape);
+    shapeNodeVisual->setRelativeTransform(tf_trans_vis);
+
+    return  terrainSkel;
+}
+
+}
+
+
+
 using namespace dart::dynamics;
 using namespace dart::simulation;
 using namespace dart::utils;
@@ -149,6 +205,16 @@ void World::Impl::SetRobot(std::shared_ptr<MiniCheetah> robot)
     robot_ = std::move(robot);
     robot_->SetWorld(world_);
     world_->addSkeleton(robot_->GetSkeleton());
+}
+
+void World::Impl::SetTerrain(Terrain terrain)
+{
+    if (terrain_ != nullptr)
+    {
+        world_->removeSkeleton(terrain_);
+    }
+    terrain_ = DartTerrainFromData(terrain);
+    world_->addSkeleton(terrain_);
 }
 
 std::string World::Impl::AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,

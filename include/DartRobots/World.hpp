@@ -3,9 +3,12 @@
 #include <Eigen/Core>
 #include <memory>
 #include <string>
+#include "DartRobots/Utils/TerrainGenerator.h"
+
 namespace DartRobots
 {
 class MiniCheetah;
+
 class World
 {
   public:
@@ -15,6 +18,7 @@ class World
     void Reset();
     void Render();
     void SetRobot(std::shared_ptr<MiniCheetah> robot);
+    void SetTerrain(Terrain terrain);
     void SetTerrainUrdf(const std::string &urdfPath = "");
     std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
                         const std::string &name = "marker");
