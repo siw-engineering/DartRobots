@@ -113,13 +113,14 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
 
 
     std::default_random_engine rd;
-
+    auto randomGen = std::mt19937(rd());
+    
     if(config.seed != -1)
     {
         rd = std::default_random_engine(config.seed);
-        auto randomGen = std::mt19937(rd());
+        randomGen = std::mt19937(rd());
     }
-    
+
     // Loop through the squares with (VerticesPerSegment * VerticesPerSegment) vertices each
     float height;
     for(int i = 0; i < nSegmentsX; ++i)
