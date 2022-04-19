@@ -24,6 +24,12 @@ void World::SetRobot(std::shared_ptr<MiniCheetah> robot)
 {
     impl_->SetRobot(std::move(robot));
 }
+
+void World::SetTerrain(Terrain terrain)
+{
+    impl_->SetTerrain(terrain);
+}
+
 void World::SetTerrainUrdf(const std::string &urdfPath)
 {
     impl_->SetTerrainUrdf(urdfPath);

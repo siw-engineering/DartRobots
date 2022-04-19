@@ -2,11 +2,15 @@
 #define DARTROBOTS_DETAIL_WORLDIMPL_HPP
 
 #include "DartRobots/MiniCheetah.hpp"
+#include "DartRobots/Utils/TerrainGenerator.h"
 #include "DartRobots/World.hpp"
 #include <dart/dynamics/Skeleton.hpp>
 #include <dart/gui/osg/ImGuiViewer.hpp>
 #include <dart/gui/osg/WorldNode.hpp>
 #include <dart/simulation/World.hpp>
+#include<dart/dart.hpp>
+
+
 
 namespace DartRobots
 {
@@ -18,6 +22,7 @@ class World::Impl
     void Reset();
     void Render();
     void SetRobot(std::shared_ptr<MiniCheetah> robot);
+    void SetTerrain(Terrain terrain);
     void SetTerrainUrdf(const std::string &urdfPath = "");
     std::string ChangeTerrain();
     std::string AddBall(const Eigen::Vector3d &translation, const Eigen::Vector3d &color, double radius,
