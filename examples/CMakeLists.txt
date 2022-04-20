@@ -4,6 +4,7 @@ target_link_libraries(MiniCheetahExample PRIVATE MiniCheetah spdlog::spdlog)
 #add_executable(TerrainGenerationExample TerrainGeneration.cpp)
 #target_link_libraries(TerrainGenerationExample PRIVATE TerrainGenerator)
 
+include_directories(../include/DartRobots/Utils)
 add_executable(DartTerrainExample TerrainDartExample.cpp)
 target_link_libraries(DartTerrainExample PRIVATE TerrainGenerator
         MiniCheetah

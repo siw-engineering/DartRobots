@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <random>
 
+using namespace Terrains;
+
 PerlinNoise::PerlinNoise() {
 
     p.insert(p.end(), p.begin(), p.end());
