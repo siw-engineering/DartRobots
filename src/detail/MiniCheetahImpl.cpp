@@ -212,7 +212,7 @@ void MiniCheetah::Impl::UpdateContactData() const
     if (!contactDataDirty_)
         return;
     // Get contact states
-    auto footContactStates = Eigen::Matrix<bool, 4, 1>{};
+    Eigen::Matrix<bool, 4, 1> footContactStates = Eigen::Matrix<bool, 4, 1>::Constant(false);
     Eigen::Matrix<double, 3, 4> footContactForces = Eigen::Matrix<double, 3, 4>::Zero();
     Eigen::Matrix<double, 3, 4> footContactNormals = Eigen::Matrix<double, 3, 4>::Zero();
     auto collisionResult = world_->getLastCollisionResult();

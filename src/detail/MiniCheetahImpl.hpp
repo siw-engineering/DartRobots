@@ -58,7 +58,7 @@ class MiniCheetah::Impl
     Eigen::Matrix<double, 4, 1> footFriction_{};
 
     mutable bool contactDataDirty_{true};
-    mutable Eigen::Matrix<bool, 4, 1> footContactStates_{};
+    mutable Eigen::Matrix<bool, 4, 1> footContactStates_{Eigen::Matrix<bool, 4, 1>::Constant(false)};
     mutable Eigen::Matrix<double, 3, 4> footContactForces_{Eigen::Matrix<double, 3, 4>::Zero()};
     mutable Eigen::Matrix<double, 3, 4> footContactNormals_{Eigen::Matrix<double, 3, 4>::Zero()};
 };
