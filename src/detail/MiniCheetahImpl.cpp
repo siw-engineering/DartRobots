@@ -59,6 +59,27 @@ void MiniCheetah::Impl::SetJointCommands(Eigen::Matrix<double, 12, 1> commands)
     }
 }
 
+void MiniCheetah::Impl::SetCommandType(CommandType cmdType)
+{
+    dart::dynamics::Joint::ActuatorType actuatorType;
+    switch (cmdType)
+    {
+    case CommandType::Torque:
+        actuatorType = dart::dynamics::Joint::FORCE;
+        break;
+    case CommandType::Velocity:
+        actuatorType = dart::dynamics::Joint::SERVO;
+        break;
+    default:
+        spdlog::warn("Invalid command type given");
+        return;
+    }
+    for (auto &joint : revoluteJoints_)
+    {
+        joint->setActuatorType(actuatorType);
+    }
+}
+
 void MiniCheetah::Impl::Reset()
 {
     coulombFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
@@ -68,6 +89,7 @@ void MiniCheetah::Impl::Reset()
         footFriction_(i) = legNodes_.at(i)->getFrictionCoeff();
     }
     contactDataDirty_ = true;
+    SetCommandType(CommandType::Torque);
 }
 
 void MiniCheetah::Impl::SetContactDirty()

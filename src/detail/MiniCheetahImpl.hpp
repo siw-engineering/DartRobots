@@ -13,10 +13,13 @@ class MiniCheetah::Impl
 {
   public:
     explicit Impl(MiniCheetahConfig config);
-    void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
     void Reset();
     void SetContactDirty();
     void SetWorld(dart::simulation::ConstWorldPtr world);
+
+    void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
+    void SetCommandType(CommandType cmdType);
+
     dart::dynamics::SkeletonPtr GetSkeleton() const;
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);

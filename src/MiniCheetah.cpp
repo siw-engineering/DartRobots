@@ -14,6 +14,10 @@ void MiniCheetah::SetJointCommands(const Eigen::Matrix<double, 12, 1> &commands)
 {
     impl_->SetJointCommands(commands);
 }
+void MiniCheetah::SetCommandType(CommandType cmdType)
+{
+    impl_->SetCommandType(cmdType);
+}
 void MiniCheetah::Reset()
 {
     impl_->Reset();

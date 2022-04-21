@@ -75,6 +75,11 @@ PYBIND11_MODULE(DartRobotsPy, m)
           "/// 4: Error\n"
           "/// 5: Critical\n"
           "/// 6: Off\n");
+
+    py::enum_<CommandType>(m, "CommandType")
+        .value("Velocity", CommandType::Velocity)
+        .value("Torque", CommandType::Torque);
+
     py::class_<MiniCheetahConfig>(m, "MiniCheetahConfig")
         .def(py::init<>())
         .def_readwrite("spawn_pos", &MiniCheetahConfig::spawnPos)
@@ -118,6 +123,7 @@ PYBIND11_MODULE(DartRobotsPy, m)
         .def("save_state", &MiniCheetah::SaveState, "Saves the current robot state")
         .def("load_state", &MiniCheetah::LoadState, "Loads the robot state to the specified checkpoint id")
         .def("set_joint_commands", &MiniCheetah::SetJointCommands, "Sets the commands for each joint")
+        .def("set_command_type", &MiniCheetah::SetCommandType, "Sets the command type for all joints")
 
         .def("set_joint_coulomb_friction", &MiniCheetah::SetJointCoulombFriction,
              "Sets the coulomb friction for each joint (Nm), produces counter torque equal to this value")

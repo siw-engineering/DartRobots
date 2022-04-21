@@ -26,6 +26,12 @@ struct MiniCheetahConfig
     std::string urdfPath{};
 };
 
+enum class CommandType
+{
+    Velocity,
+    Torque
+};
+
 class MiniCheetah
 {
   public:
@@ -39,7 +45,7 @@ class MiniCheetah
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
     void SetJointCommands(const Eigen::Matrix<double, 12, 1> &commands);
-    // TODO: Add set joint mode to allow both torque and velocity control
+    void SetCommandType(CommandType cmdType);
     void SetJointCoulombFriction(Eigen::Ref<const Eigen::Matrix<double, 12, 1>> val);
     void SetJointViscousFriction(Eigen::Ref<const Eigen::Matrix<double, 12, 1>> val);
     void SetFootFriction(Eigen::Ref<const Eigen::Matrix<double, 4, 1>> val);
