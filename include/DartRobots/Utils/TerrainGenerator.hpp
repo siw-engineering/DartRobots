@@ -1,9 +1,9 @@
 #ifndef TERRAINGENERATOR_TERRAINGENERATOR_H
 #define TERRAINGENERATOR_TERRAINGENERATOR_H
 
-#include <vector>
+#include "PerlinNoise.hpp"
 #include <random>
-#include "PerlinNoise.h"
+#include <vector>
 
 enum struct TerrainType
 {

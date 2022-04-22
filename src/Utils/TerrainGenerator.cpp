@@ -1,6 +1,6 @@
-#include "TerrainGenerator.h"
-#include <math.h>
+#include "TerrainGenerator.hpp"
 #include <Eigen/Dense>
+#include <math.h>
 
 using namespace Terrains;
 

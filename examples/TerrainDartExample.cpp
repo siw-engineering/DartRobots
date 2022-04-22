@@ -1,10 +1,10 @@
 #include "DartRobots/MiniCheetah.hpp"
 #include "DartRobots/World.hpp"
-#include "TerrainGenerator.h"
+#include "TerrainGenerator.hpp"
+#include "TerrainHelpers.hpp"
 #include <chrono>
 #include <iostream>
 #include <spdlog/spdlog.h>
-#include "TerrainHelpers.h"
 
 using namespace std::chrono;
 using namespace  Terrains;

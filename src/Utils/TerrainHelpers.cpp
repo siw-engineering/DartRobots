@@ -1,8 +1,8 @@
-#ifndef DARTROBOTS_TERRAINHELPERS_H
-#define DARTROBOTS_TERRAINHELPERS_H
-#include <dart/dart.hpp>
+#include "TerrainHelpers.hpp"
+#include <iostream>
 
-namespace {
+namespace Terrains
+{
 dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain)
 {
 
@@ -60,24 +60,42 @@ float GetHeight(float x, float y, Terrain &terrain)
 
     // Bi-linear interpolation
 
-    // find the leftmost corner of square that contains (x,y)
-    int xi = std::floor(x);
-    int yi = std::floor(y);
+    auto config = terrain.config;
 
-    auto xs = (terrain.config.xSize / terrain.config.resolution) + 1;
-    auto ys = (terrain.config.ySize / terrain.config.resolution) + 1;
+    // add offset in meters (to compensate centering)
+    auto xc = x + config.xSize/2;
+    auto yc = y + config.ySize/2;
+
+    // find grid coordinates for (xc, yc)
+    int xg = xc / config.resolution;
+    int yg = yc / config.resolution;
+
+    auto numXsamples = (config.xSize/config.resolution) + 1;
+    auto numYsamples = (config.ySize/config.resolution) + 1;
+
+    int x1, x2, y1, y2;
+    x1 = xg;
+    y1 = yg;
+    xg + 1 <= (numXsamples - 1) ?  x2 = xg + 1 : x2 = xg;
+    yg + 1 <= (numYsamples - 1) ?  y2 = yg + 1 : y2 = yg;
+
 
     //Get heights at the corners
-    Eigen::Map<Eigen::Matrix<float, -1, -1>> hmap(terrain.heights.data(), xs, ys);
-    auto h00 = hmap(xi, yi);
-    auto h01 = hmap(xi + 1, yi);
-    auto h10 = hmap(xi, yi + 1);
-    auto h11 = hmap(xi + 1, yi + 1);
+    float h00,h01,h10,h11;
 
-    // find tx, ty
-    float tx = x - xi;
-    float ty = y - yi;
+    Eigen::Map<Eigen::Matrix<float, -1, -1>> hmap(terrain.heights.data(), numXsamples, numYsamples);
+    h00 = hmap(x1, y1);
+    h01 = hmap(x2, y1);
+    h10 = hmap(x1, y2);
+    h11 = hmap(x2, y2);
 
+
+    // find tx, ty (computed in meters)
+    float tx = ((x+ config.resolution) - x);
+    float ty = ((y+ config.resolution) - y);
+
+    std::cout << "XG , YG :"<<xg<<" , "<<yg<<std::endl;
+    std::cout << "TX , TY :"<<tx<<" , "<<ty<<std::endl;
     return (1 - tx) * (1 - ty) * h00 +
            tx * (1 - ty) * h10 +
            (1 - tx) * ty * h01 +
@@ -85,5 +103,3 @@ float GetHeight(float x, float y, Terrain &terrain)
 }
 
 }
-
-#endif // DARTROBOTS_TERRAINHELPERS_H

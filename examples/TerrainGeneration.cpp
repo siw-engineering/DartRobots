@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include "TerrainGenerator.h"
+#include "TerrainGenerator.hpp"
 
 int main()
 {

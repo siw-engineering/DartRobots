@@ -1,5 +1,6 @@
 #include "WorldImpl.hpp"
 #include "DartRobots/Config.hpp"
+#include "DartRobots/Utils/TerrainHelpers.hpp"
 #include <chrono>
 #include <dart/collision/ode/ode.hpp>
 #include <dart/common/Uri.hpp>
@@ -10,7 +11,6 @@
 #include <dart/utils/urdf/urdf.hpp>
 #include <filesystem>
 #include <spdlog/spdlog.h>
-#include "DartRobots/Utils/TerrainHelpers.h"
 
 using namespace dart::dynamics;
 using namespace dart::simulation;
@@ -158,7 +158,7 @@ void World::Impl::SetTerrain(Terrain terrain)
     {
         world_->removeSkeleton(terrain_);
     }
-    terrain_ = DartTerrainFromData(terrain);
+    terrain_ = Terrains::DartTerrainFromData(terrain);
     world_->addSkeleton(terrain_);
 }
 

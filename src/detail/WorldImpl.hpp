@@ -2,15 +2,13 @@
 #define DARTROBOTS_DETAIL_WORLDIMPL_HPP
 
 #include "DartRobots/MiniCheetah.hpp"
-#include "DartRobots/Utils/TerrainGenerator.h"
+#include "DartRobots/Utils/TerrainGenerator.hpp"
 #include "DartRobots/World.hpp"
+#include <dart/dart.hpp>
 #include <dart/dynamics/Skeleton.hpp>
 #include <dart/gui/osg/ImGuiViewer.hpp>
 #include <dart/gui/osg/WorldNode.hpp>
 #include <dart/simulation/World.hpp>
-#include<dart/dart.hpp>
-
-
 
 namespace DartRobots
 {
