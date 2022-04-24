@@ -1,6 +1,8 @@
-#include "TerrainGenerator.h"
-#include <math.h>
+#include "TerrainGenerator.hpp"
 #include <Eigen/Dense>
+#include <math.h>
+
+using namespace Terrains;
 
 TerrainGenerator::TerrainGenerator()
 {
@@ -114,7 +116,7 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
 
     std::default_random_engine rd;
     auto randomGen = std::mt19937(rd());
-    
+
     if(config.seed != -1)
     {
         rd = std::default_random_engine(config.seed);

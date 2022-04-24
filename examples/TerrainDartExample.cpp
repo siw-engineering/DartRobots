@@ -1,11 +1,13 @@
 #include "DartRobots/MiniCheetah.hpp"
 #include "DartRobots/World.hpp"
-#include "TerrainGenerator.h"
+#include "TerrainGenerator.hpp"
+#include "TerrainHelpers.hpp"
 #include <chrono>
 #include <iostream>
 #include <spdlog/spdlog.h>
 
 using namespace std::chrono;
+using namespace  Terrains;
 
 int main()
 {
@@ -16,7 +18,7 @@ int main()
     TerrainConfig config;
 
     config.seed = 633;
-    config.terrainType = TerrainType::Steps;
+    config.terrainType = TerrainType::Hills;
     config.xSize = config.ySize = 4.0;
     config.resolution = 0.02;
     // Hills
@@ -49,7 +51,7 @@ int main()
             robot->SetJointCommands(Eigen::Matrix<double, 12, 1>::Zero());
             world.Step(1);
             auto footPos = robot->GetFootPositions();
-            world.Render();
+            //world.Render();
         }
         robot->LoadState(0);
         world.Reset();
@@ -64,11 +66,26 @@ int main()
 
         terrain = generator.generate(config);
         world.SetTerrain(terrain);
-
     }
 
     auto endTime = steady_clock::now();
     auto timeDiffMs = duration_cast<milliseconds>(endTime - startTime).count();
     std::cout << "Time taken: " << timeDiffMs << std::endl;
 
+    auto xs = (terrain.config.xSize /terrain.config.resolution) + 1;
+    auto ys = (terrain.config.ySize /terrain.config.resolution) + 1;
+    Eigen::Map<Eigen::Matrix<float,  -1, -1>> hmap(terrain.heights.data(),
+                                                  xs,
+                                                  ys);
+    auto xi = 100;
+    auto yi = 100;
+    std::cout << "Height at ("<<xi<<" , "<<yi<< ") : "<< hmap(xi,yi)<<std::endl;
+    std::cout << "Height at ("<<xi + 1 <<" , "<<yi<< ") : "<< hmap(xi+1,yi)<<std::endl;
+    std::cout << "Height at ("<<xi<<" , "<<yi+1<< ") : "<< hmap(xi,yi+1)<<std::endl;
+    std::cout << "Height at ("<<xi+1<<" , "<<yi+1<< ") : "<< hmap(xi+1,yi+1)<<std::endl;
+
+    auto dx = 0.3;
+    auto dy = 0.7;
+    std::cout << "Computed height at ("<<xi<<" , "<<yi<< ") : "<<GetHeight(xi,yi, terrain)<<std::endl;
+    std::cout << "Computed height at ("<<xi + dx <<" , "<<yi + dy<< ") : "<<GetHeight(xi + dx,yi + dy, terrain)<<std::endl;
 }
