@@ -59,6 +59,27 @@ void MiniCheetah::Impl::SetJointCommands(Eigen::Matrix<double, 12, 1> commands)
     }
 }
 
+void MiniCheetah::Impl::SetCommandType(CommandType cmdType)
+{
+    dart::dynamics::Joint::ActuatorType actuatorType;
+    switch (cmdType)
+    {
+    case CommandType::Torque:
+        actuatorType = dart::dynamics::Joint::FORCE;
+        break;
+    case CommandType::Velocity:
+        actuatorType = dart::dynamics::Joint::SERVO;
+        break;
+    default:
+        spdlog::warn("Invalid command type given");
+        return;
+    }
+    for (auto &joint : revoluteJoints_)
+    {
+        joint->setActuatorType(actuatorType);
+    }
+}
+
 void MiniCheetah::Impl::Reset()
 {
     coulombFriction_ = Eigen::Matrix<double, 12, 1>::Zero();
@@ -68,6 +89,7 @@ void MiniCheetah::Impl::Reset()
         footFriction_(i) = legNodes_.at(i)->getFrictionCoeff();
     }
     contactDataDirty_ = true;
+    SetCommandType(CommandType::Torque);
 }
 
 void MiniCheetah::Impl::SetContactDirty()
@@ -212,7 +234,7 @@ void MiniCheetah::Impl::UpdateContactData() const
     if (!contactDataDirty_)
         return;
     // Get contact states
-    auto footContactStates = Eigen::Matrix<bool, 4, 1>{};
+    Eigen::Matrix<bool, 4, 1> footContactStates = Eigen::Matrix<bool, 4, 1>::Constant(false);
     Eigen::Matrix<double, 3, 4> footContactForces = Eigen::Matrix<double, 3, 4>::Zero();
     Eigen::Matrix<double, 3, 4> footContactNormals = Eigen::Matrix<double, 3, 4>::Zero();
     auto collisionResult = world_->getLastCollisionResult();

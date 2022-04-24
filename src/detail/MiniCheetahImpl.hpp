@@ -13,10 +13,13 @@ class MiniCheetah::Impl
 {
   public:
     explicit Impl(MiniCheetahConfig config);
-    void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
     void Reset();
     void SetContactDirty();
     void SetWorld(dart::simulation::ConstWorldPtr world);
+
+    void SetJointCommands(Eigen::Matrix<double, 12, 1> commands);
+    void SetCommandType(CommandType cmdType);
+
     dart::dynamics::SkeletonPtr GetSkeleton() const;
     void SaveState(unsigned checkpointId);
     void LoadState(unsigned checkpointId);
@@ -58,7 +61,7 @@ class MiniCheetah::Impl
     Eigen::Matrix<double, 4, 1> footFriction_{};
 
     mutable bool contactDataDirty_{true};
-    mutable Eigen::Matrix<bool, 4, 1> footContactStates_{};
+    mutable Eigen::Matrix<bool, 4, 1> footContactStates_{Eigen::Matrix<bool, 4, 1>::Constant(false)};
     mutable Eigen::Matrix<double, 3, 4> footContactForces_{Eigen::Matrix<double, 3, 4>::Zero()};
     mutable Eigen::Matrix<double, 3, 4> footContactNormals_{Eigen::Matrix<double, 3, 4>::Zero()};
 };
