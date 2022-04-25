@@ -1,7 +1,9 @@
-#include "PerlinNoise.h"
-#include <cmath>
+#include "PerlinNoise.hpp"
 #include <algorithm>
+#include <cmath>
 #include <random>
+
+using namespace Terrains;
 
 PerlinNoise::PerlinNoise() {
 

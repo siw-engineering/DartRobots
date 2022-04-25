@@ -1,9 +1,9 @@
 #ifndef DARTROBOTS_WORLD_HPP
 #define DARTROBOTS_WORLD_HPP
+#include "DartRobots/Utils/TerrainGenerator.hpp"
 #include <Eigen/Core>
 #include <memory>
 #include <string>
-#include "DartRobots/Utils/TerrainGenerator.h"
 
 namespace DartRobots
 {

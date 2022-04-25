@@ -1,18 +1,17 @@
 #ifndef TERRAINGENERATOR_TERRAINGENERATOR_H
 #define TERRAINGENERATOR_TERRAINGENERATOR_H
 
-#include <vector>
+#include "PerlinNoise.hpp"
 #include <random>
-#include "PerlinNoise.h"
+#include <vector>
 
 enum struct TerrainType
 {
-    Invalid =0,
+    Invalid = 0,
     Hills,
     Steps,
     Plane
 };
-
 
 struct TerrainConfig
 {
@@ -20,7 +19,7 @@ struct TerrainConfig
     int seed = -1;
 
     float xSize, ySize = -1; // in meters
-    float resolution = -1; // size of a square in meters
+    float resolution = -1;   // size of a square in meters
 
     // To be used with hill terrain
     float roughenss = -1;
@@ -33,31 +32,28 @@ struct TerrainConfig
     float stepHeight = -1;
 };
 
-
 struct Terrain
 {
     std::vector<float> heights;
     TerrainConfig config;
 };
-
+namespace Terrains
+{
 class TerrainGenerator
 {
 
   public:
-
     TerrainGenerator();
 
     // Returns an instance of Terrain based on provided configuration
-    Terrain generate(const TerrainConfig& config);
+    Terrain generate(const TerrainConfig &config);
 
-    Terrain generateHills(const TerrainConfig& config);
-    Terrain generateSteps(const TerrainConfig& config);
-    Terrain generatePlane(const TerrainConfig& config);
-
+    Terrain generateHills(const TerrainConfig &config);
+    Terrain generateSteps(const TerrainConfig &config);
+    Terrain generatePlane(const TerrainConfig &config);
 
   protected:
-
     std::uniform_real_distribution<float> uniformDist_;
 };
-
+}
 #endif //TERRAINGENERATOR_TERRAINGENERATOR_H
