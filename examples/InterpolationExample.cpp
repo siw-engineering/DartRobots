@@ -56,7 +56,7 @@ int main()
     for(int i = 0; i < 500; i++)
     {
         world.Step(1);
-        if (i % 20)
+        if (i % 20 == 0)
         world.Render();
     }
     world.DeleteBall(markerName);

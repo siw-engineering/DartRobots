@@ -57,7 +57,7 @@ int main()
         world.Reset();
 
         // Change terrain
-        if(i % 2)
+        if(i % 2 == 0)
             config.terrainType = TerrainType::Hills;
         else if(i % 3 ==0)
             config.terrainType = TerrainType::Steps;
