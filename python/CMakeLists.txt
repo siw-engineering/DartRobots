@@ -12,7 +12,7 @@ set_target_properties(DartRobotsPy PROPERTIES
 target_include_directories(DartRobotsPy PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(DartRobotsPy PRIVATE MiniCheetah)
+target_link_libraries(DartRobotsPy PRIVATE MiniCheetah TerrainGenerator)
 
 install(TARGETS DartRobotsPy
         LIBRARY DESTINATION DartRobots

@@ -55,7 +55,7 @@ if (PACKAGE_PYTHON)
     set(CMAKE_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATADIR_TEMP})
 endif ()
 
-add_library(TerrainGenerator src/Utils/TerrainGenerator.cpp src/Utils/PerlinNoise.cpp src/Utils/TerrainHelpers.cpp)
+add_library(TerrainGenerator SHARED src/Utils/TerrainGenerator.cpp src/Utils/PerlinNoise.cpp src/Utils/TerrainHelpers.cpp)
 target_link_libraries(TerrainGenerator PRIVATE Eigen3::Eigen dart)
 target_include_directories(TerrainGenerator PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/DartRobots/Utils>)
