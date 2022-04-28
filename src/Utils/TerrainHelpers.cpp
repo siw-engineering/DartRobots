@@ -94,8 +94,8 @@ float GetHeight(float x, float y, Terrain &terrain)
     float tx = ((x+ config.resolution) - x);
     float ty = ((y+ config.resolution) - y);
 
-    std::cout << "XG , YG :"<<xg<<" , "<<yg<<std::endl;
-    std::cout << "TX , TY :"<<tx<<" , "<<ty<<std::endl;
+//    std::cout << "XG , YG :"<<xg<<" , "<<yg<<std::endl;
+//    std::cout << "TX , TY :"<<tx<<" , "<<ty<<std::endl;
     return (1 - tx) * (1 - ty) * h00 +
            tx * (1 - ty) * h10 +
            (1 - tx) * ty * h01 +

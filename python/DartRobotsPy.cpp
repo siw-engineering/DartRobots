@@ -1,5 +1,7 @@
 #include "DartRobots/MiniCheetah.hpp"
 #include "DartRobots/World.hpp"
+#include "DartRobots/Utils/TerrainGenerator.hpp"
+#include "DartRobots/Utils/TerrainHelpers.hpp"
 #include <filesystem>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
@@ -9,6 +11,7 @@
 
 namespace py = pybind11;
 using namespace DartRobots;
+using namespace Terrains;
 
 void SetLogLevel(int level)
 {
@@ -63,6 +66,7 @@ std::string GetGroundUrdf()
 
 PYBIND11_MODULE(DartRobotsPy, m)
 {
+
     m.def("get_mini_cheetah_urdf", &GetMiniCheetahUrdf,
           "Gets the mini cheetah urdf path based on module install directory");
     m.def("get_ground_urdf", &GetGroundUrdf, "Gets the ground urdf path based on module install directory");
@@ -75,6 +79,45 @@ PYBIND11_MODULE(DartRobotsPy, m)
           "/// 4: Error\n"
           "/// 5: Critical\n"
           "/// 6: Off\n");
+
+    /*****************Terrain Begin*****************************/
+
+    py::enum_<TerrainType>(m, "TerrainType")
+        .value("Invalid", TerrainType::Invalid)
+        .value("Hills", TerrainType::Hills)
+        .value("Steps", TerrainType::Steps)
+        .value("Plane", TerrainType::Plane);
+
+    py::class_<TerrainConfig>(m, "TerrainConfig")
+        .def(py::init<>())
+        .def_readwrite("terrain_type", &TerrainConfig::terrainType)
+        .def_readwrite("seed", &TerrainConfig::seed)
+        .def_readwrite("x_size", &TerrainConfig::xSize)
+        .def_readwrite("y_size", &TerrainConfig::ySize)
+        .def_readwrite("resolution", &TerrainConfig::resolution)
+        .def_readwrite("roughness", &TerrainConfig::roughenss)
+        .def_readwrite("amplitude", &TerrainConfig::amplitude)
+        .def_readwrite("frequency", &TerrainConfig::frequency)
+        .def_readwrite("num_octaves", &TerrainConfig::numOctaves)
+        .def_readwrite("step_width", &TerrainConfig::stepWidth)
+        .def_readwrite("step_height", &TerrainConfig::stepHeight);
+
+    py::class_<Terrain>(m, "Terrain")
+        .def(py::init<>())
+        .def_readwrite("heights", &Terrain::heights)
+        .def_readwrite("config", &Terrain::config);
+
+
+    py::class_<TerrainGenerator>(m, "TerrainGenerator")
+        .def(py::init<>())
+        .def("generate", &TerrainGenerator::generate,
+             py::arg("config"), "Generates terrain with specified config");
+
+    m.def("get_height", &GetHeight,
+          py::arg("x"), py::arg("y"),
+          py::arg("terrain"), "Returns height at given x,y");
+
+    /******************Terrain End****************************/
 
     py::enum_<CommandType>(m, "CommandType")
         .value("Velocity", CommandType::Velocity)
@@ -163,4 +206,5 @@ PYBIND11_MODULE(DartRobotsPy, m)
              "Gets the angular velocity (rad/s) of the robot in world frame")
         .def("get_world_lin_acc", &MiniCheetah::GetWorldLinAcc,
              "Gets the linear acceleration (m/s^2) of the robot in world frame");
+
 }

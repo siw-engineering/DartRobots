@@ -7,7 +7,6 @@ namespace Terrains
 {
 dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain);
 float GetHeight(float x,float y, Terrain& terrain);
-
 }
 
 #endif // DARTROBOTS_TERRAINHELPERS_HPP

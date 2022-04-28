@@ -57,7 +57,7 @@ int main()
         world.Reset();
 
         // Change terrain
-        if(i % 2)
+        if(i % 2 == 0)
             config.terrainType = TerrainType::Hills;
         else if(i % 3 ==0)
             config.terrainType = TerrainType::Steps;
@@ -77,8 +77,8 @@ int main()
     Eigen::Map<Eigen::Matrix<float,  -1, -1>> hmap(terrain.heights.data(),
                                                   xs,
                                                   ys);
-    auto xi = 100;
-    auto yi = 100;
+    auto xi = 1;
+    auto yi = 1;
     std::cout << "Height at ("<<xi<<" , "<<yi<< ") : "<< hmap(xi,yi)<<std::endl;
     std::cout << "Height at ("<<xi + 1 <<" , "<<yi<< ") : "<< hmap(xi+1,yi)<<std::endl;
     std::cout << "Height at ("<<xi<<" , "<<yi+1<< ") : "<< hmap(xi,yi+1)<<std::endl;
