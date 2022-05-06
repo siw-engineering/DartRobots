@@ -151,6 +151,7 @@ PYBIND11_MODULE(DartRobotsPy, m)
         .def("reset", &World::Reset, "Resets the simulator and robots inside")
         .def("render", &World::Render, "Draws the current frame")
         .def("set_robot", &World::SetRobot, py::arg("robot"), "Sets the robot")
+        .def("set_terrain", &World::SetTerrain, py::arg("terrain"), "Sets the heightmap terrain")
         .def("set_terrain_urdf", &World::SetTerrainUrdf, py::arg("urdf_path"),
              "Sets the terrain using the provided urdf")
         .def("add_ball", &World::AddBall, "Adds a ball, returns name of ball stored in sim", py::arg("translation"),
