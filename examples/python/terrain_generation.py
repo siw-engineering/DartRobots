@@ -4,8 +4,11 @@ from DartRobotsPy import TerrainConfig
 from DartRobotsPy import  TerrainType
 from DartRobotsPy import  TerrainGenerator
 from DartRobotsPy import get_height
+from DartRobotsPy import World
 
 
+
+generator = TerrainGenerator()
 
 # Configure the terrain
 
@@ -41,7 +44,7 @@ configSteps.step_width = 0.2
 configSteps.step_height = 0.1
 
 # Generate the terrain
-generator = TerrainGenerator()
+
 print("\n")
 print("Plane ")
 terrain = generator.generate(configPlane)
@@ -49,16 +52,24 @@ print("Num vertices", len(terrain.heights))
 print("height at 1.3333, 1.7777 : ", get_height(1.3333, 1.7777, terrain))
 print("\n")
 
-generator = TerrainGenerator()
+print("Steps")
+terrain = generator.generate(configSteps)
+print("Num vertices", len(terrain.heights))
+print("height at 1.3333, 1.7777 : ", get_height(1.3333, 1.7777, terrain))
+print("\n")
+
+
 print("Hills")
 terrain = generator.generate(configHills)
 print("Num vertices", len(terrain.heights))
 print("height at 1.3333, 1.7777 : ", get_height(1.3333, 1.7777, terrain))
 print("\n")
 
-generator = TerrainGenerator()
-print("Steps")
-terrain = generator.generate(configSteps)
-print("Num vertices", len(terrain.heights))
-print("height at 1.3333, 1.7777 : ", get_height(1.3333, 1.7777, terrain))
-print("\n")
+
+
+world = World()
+world.set_terrain(terrain)
+
+for i in range(1000):
+    if i % 5 == 0:
+        world.render()
