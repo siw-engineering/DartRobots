@@ -53,15 +53,13 @@ struct Point2D
     double y;
 };
 
-float Sign(Point2D p1, Point2D p2, Point2D p3)
-{
-    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
-}
-
 bool PointInTriangle(Point2D pt, Point2D v1, Point2D v2, Point2D v3)
 {
     double d1, d2, d3;
     bool has_neg, has_pos;
+    const auto Sign = [](Point2D p1, Point2D p2, Point2D p3) {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+    };
 
     d1 = Sign(pt, v1, v2);
     d2 = Sign(pt, v2, v3);
@@ -92,10 +90,28 @@ Point2D ToGridCoords(double x, double y, const Terrain &terrain)
 
 auto GetBoundingTriEdges(const Point2D &point, const Terrain &terrain)
 {
+    /*
+     * For any given point, we want to determine the nearest 3 points of its bounding rectangle
+     * If the point itself lies on a line between 2 grid points, then there will be 2 same points out of the 3
+     * if the point itself lies on a grid point, then all 3 returned points will be the same
+     * Grid point refers to a point with height value in the heightmap grid
+     *
+     * In the calculations below we assume that the grid is being triangulated this way
+     P1----------P3
+     |  \         |
+     |    \       |
+     |      \     |
+     |        \   |
+     P0----------P2
+    Coordinate representation:
+           ^ X
+           |
+     Y<----|
+       (z is in direction out of screen towards reader)
+     */
     const auto numXsamples = static_cast<int32_t>(terrain.config.xSize / terrain.config.resolution) + 1;
     const auto numYsamples = static_cast<int32_t>(terrain.config.ySize / terrain.config.resolution) + 1;
     Eigen::Map<const Eigen::Matrix<float, -1, -1>> hmap(terrain.heights.data(), numXsamples, numYsamples);
-
     const auto xg = point.x;
     const auto yg = point.y;
     Point2D oriPoint{.x = xg, .y = yg};
@@ -168,20 +184,6 @@ double InterpZ(double x, double y, const std::array<const Eigen::Vector3d, 3> &p
 
 double GetHeight(double x, double y, Terrain &terrain)
 {
-    /*
-     * Assume that the grid is being triangulated this way
-     P1----------P3
-     |  \         |
-     |    \       |
-     |      \     |
-     |        \   |
-     P0----------P2
-    Coordinate representation:
-           ^ X
-           |
-     Y<----|
-       (z is in direction out of screen towards reader)
-     */
     auto pointGrid = ToGridCoords(x, y, terrain);
     auto boundingEdges = GetBoundingTriEdges(pointGrid, terrain);
     return InterpZ(pointGrid.x, pointGrid.y, boundingEdges);
