@@ -18,11 +18,11 @@ struct TerrainConfig
     TerrainType terrainType = TerrainType::Invalid;
     int seed = -1;
 
-    float xSize, ySize = -1; // in meters
-    float resolution = -1;   // size of a square in meters
+    double xSize, ySize = -1; // in meters
+    double resolution = -1;   // size of a square in meters
 
     // To be used with hill terrain
-    float roughenss = -1;
+    float roughness = -1;
     float amplitude = -1;
     float frequency = -1;
     int numOctaves = -1;

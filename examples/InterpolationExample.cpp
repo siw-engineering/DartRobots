@@ -24,9 +24,8 @@ int main()
     // Hills
     config.amplitude = 0.2;
     config.frequency = 0.2;
-    config.roughenss = 0.000;
+    config.roughness = 0.000;
     config.numOctaves = 1;
-
 
     // Steps
     config.stepWidth = 0.2;

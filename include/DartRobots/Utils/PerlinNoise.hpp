@@ -10,7 +10,7 @@ class PerlinNoise
   public:
     PerlinNoise();
     PerlinNoise(int seed);
-    float noise(float x, float y, float z);
+    double noise(double x, double y, double z);
 
   private:
     std::vector<int> p = {
@@ -27,9 +27,9 @@ class PerlinNoise
         181, 199, 106, 157, 184, 84,  204, 176, 115, 121, 50,  45,  127, 4,   150, 254, 138, 236, 205, 93,  222, 114,
         67,  29,  24,  72,  243, 141, 128, 195, 78,  66,  215, 61,  156, 180};
 
-    float fade(float t);
-    float lerp(float t, float a, float b);
-    float grad(int hash, float x, float y, float z);
+    double fade(double t);
+    double lerp(double t, double a, double b);
+    double grad(int hash, double x, double y, double z);
 };
 }
 #endif

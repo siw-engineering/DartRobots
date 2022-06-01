@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name="DartRobots",
-    version="0.2.5",
+    version="0.2.6",
     description="A collection of robots using dartsim",
     author="Poh Zhi Ee",
     license="MIT",
