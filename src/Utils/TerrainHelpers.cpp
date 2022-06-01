@@ -16,6 +16,7 @@ dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain)
 
     terrainShape->setHeightField(xs, ys, terrain.heights);
     terrainShape->setScale(scale);
+    terrainShape->flipY();
     // Make skeleton
     dart::dynamics::SkeletonPtr terrainSkel = dart::dynamics::Skeleton::create();
 
