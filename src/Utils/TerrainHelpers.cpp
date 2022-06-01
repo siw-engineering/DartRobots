@@ -7,9 +7,9 @@ dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain)
 {
 
     auto config = terrain.config;
-    // create shape of terrrain
+    // create shape of terrain
     auto terrainShape = std::make_shared<dart::dynamics::HeightmapShape<float>>();
-    auto scale = Eigen::Vector3f{config.resolution, config.resolution, 1.0};
+    auto scale = Eigen::Vector3f{static_cast<float>(config.resolution), static_cast<float>(config.resolution), 1.0};
 
     auto xs = int(config.xSize / config.resolution) + 1;
     auto ys = int(config.ySize / config.resolution) + 1;
@@ -47,59 +47,144 @@ dart::dynamics::SkeletonPtr DartTerrainFromData(Terrain terrain)
     return terrainSkel;
 }
 
-float GetHeight(float x, float y, Terrain &terrain)
+struct Point2D
 {
-    /*
-     C10----------C11
-     |            |
-     |            |
-     |            |
-     |            |
-     C00----------C01
-     */
+    double x;
+    double y;
+};
 
-    // Bi-linear interpolation
+float Sign(Point2D p1, Point2D p2, Point2D p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
 
+bool PointInTriangle(Point2D pt, Point2D v1, Point2D v2, Point2D v3)
+{
+    double d1, d2, d3;
+    bool has_neg, has_pos;
+
+    d1 = Sign(pt, v1, v2);
+    d2 = Sign(pt, v2, v3);
+    d3 = Sign(pt, v3, v1);
+
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
+}
+
+Point2D ToGridCoords(double x, double y, const Terrain &terrain)
+{
     auto config = terrain.config;
 
+    // Perform conversion from cartesian coordinates to grid coordinates
+
     // add offset in meters (to compensate centering)
-    auto xc = x + config.xSize/2;
-    auto yc = y + config.ySize/2;
+    auto xc = x + config.xSize / 2;
+    auto yc = y + config.ySize / 2;
 
-    // find grid coordinates for (xc, yc)
-    int xg = xc / config.resolution;
-    int yg = yc / config.resolution;
+    // scaling
+    auto xg = xc / config.resolution;
+    auto yg = yc / config.resolution;
 
-    auto numXsamples = (config.xSize/config.resolution) + 1;
-    auto numYsamples = (config.ySize/config.resolution) + 1;
-
-    int x1, x2, y1, y2;
-    x1 = xg;
-    y1 = yg;
-    xg + 1 <= (numXsamples - 1) ?  x2 = xg + 1 : x2 = xg;
-    yg + 1 <= (numYsamples - 1) ?  y2 = yg + 1 : y2 = yg;
-
-
-    //Get heights at the corners
-    float h00,h01,h10,h11;
-
-    Eigen::Map<Eigen::Matrix<float, -1, -1>> hmap(terrain.heights.data(), numXsamples, numYsamples);
-    h00 = hmap(x1, y1);
-    h01 = hmap(x2, y1);
-    h10 = hmap(x1, y2);
-    h11 = hmap(x2, y2);
-
-
-    // find tx, ty (computed in meters)
-    float tx = ((x+ config.resolution) - x);
-    float ty = ((y+ config.resolution) - y);
-
-//    std::cout << "XG , YG :"<<xg<<" , "<<yg<<std::endl;
-//    std::cout << "TX , TY :"<<tx<<" , "<<ty<<std::endl;
-    return (1 - tx) * (1 - ty) * h00 +
-           tx * (1 - ty) * h10 +
-           (1 - tx) * ty * h01 +
-           tx * ty * h11;
+    return Point2D{.x = xg, .y = yg};
 }
 
+auto GetBoundingTriEdges(const Point2D &point, const Terrain &terrain)
+{
+    const auto numXsamples = static_cast<int32_t>(terrain.config.xSize / terrain.config.resolution) + 1;
+    const auto numYsamples = static_cast<int32_t>(terrain.config.ySize / terrain.config.resolution) + 1;
+    Eigen::Map<const Eigen::Matrix<float, -1, -1>> hmap(terrain.heights.data(), numXsamples, numYsamples);
+
+    const auto xg = point.x;
+    const auto yg = point.y;
+    Point2D oriPoint{.x = xg, .y = yg};
+    std::array<const Point2D, 4> nearestPoints{
+        Point2D{.x = std::floor(xg), .y = std::ceil(yg)},
+        Point2D{.x = std::ceil(xg), .y = std::ceil(yg)},
+        Point2D{.x = std::floor(xg), .y = std::floor(yg)},
+        Point2D{.x = std::ceil(xg), .y = std::floor(yg)},
+    };
+    bool inLeftTri = PointInTriangle(oriPoint, nearestPoints[0], nearestPoints[1], nearestPoints[2]);
+    bool inRightTri = PointInTriangle(oriPoint, nearestPoints[1], nearestPoints[2], nearestPoints[3]);
+    if (!inLeftTri && !inRightTri)
+    {
+        throw std::runtime_error("Point not in left or right triangle, check code logic");
+    }
+    auto pointToEigenVec = [hmap](const Point2D &point) {
+        return Eigen::Vector3d(point.x, point.y, hmap(static_cast<int>(point.x), static_cast<int>(point.y)));
+    };
+    if (inLeftTri)
+    {
+        return std::array<const Eigen::Vector3d, 3>{
+            pointToEigenVec(nearestPoints[0]), pointToEigenVec(nearestPoints[1]), pointToEigenVec(nearestPoints[2])};
+    }
+    return std::array<const Eigen::Vector3d, 3>{pointToEigenVec(nearestPoints[1]), pointToEigenVec(nearestPoints[2]),
+                                                pointToEigenVec(nearestPoints[3])};
 }
+
+double InterpZ(double x, double y, const std::array<const Eigen::Vector3d, 3> &points)
+{
+    // Refer to this post:
+    // https://math.stackexchange.com/questions/3675166/how-to-handle-degenerate-case-for-interpolating-with-3-point-plane
+
+    // Check if all points are same, if so just return the height
+    if (points.at(0).isApprox(points.at(1)) and points.at(0).isApprox(points.at(2)))
+    {
+        return points.at(0).z();
+    }
+
+    // If all 3 points are distinct, we can form a plane and calculate the intersection and return that as height
+    if (!points.at(0).isApprox(points.at(1)) and !points.at(0).isApprox(points.at(2)))
+    {
+        // 3 distinct points, so we can form a plane
+        Eigen::Vector3d AB = points[1] - points[0];
+        Eigen::Vector3d AC = points[2] - points[0];
+        Eigen::Vector3d planeNormal = AB.cross(AC);
+        double constant = points.at(0).dot(planeNormal);
+        double height = (constant - planeNormal.x() * x - planeNormal.y() * y) / planeNormal.z();
+        return height;
+    }
+
+    // There are only 2 distinct points, so figure out the 2 distinct points and perform interpolation
+    Eigen::Vector3d point1, point2;
+    if (points[0].isApprox(points[1]))
+    {
+        point1 = points[0];
+        point2 = points[2];
+    }
+    else
+    {
+        point1 = points[0];
+        point2 = points[1];
+    }
+    Eigen::Vector3d direction = (point1 - point2).normalized();
+    if (std::abs(direction.x()) < DBL_MIN)
+    {
+        return (y - point1.y()) / direction.y() * direction.z() + point1.z();
+    }
+    return (x - point1.x()) / direction.x() * direction.z() + point1.z();
+}
+
+double GetHeight(double x, double y, Terrain &terrain)
+{
+    /*
+     * Assume that the grid is being triangulated this way
+     P1----------P3
+     |  \         |
+     |    \       |
+     |      \     |
+     |        \   |
+     P0----------P2
+    Coordinate representation:
+           ^ X
+           |
+     Y<----|
+       (z is in direction out of screen towards reader)
+     */
+    auto pointGrid = ToGridCoords(x, y, terrain);
+    auto boundingEdges = GetBoundingTriEdges(pointGrid, terrain);
+    return InterpZ(pointGrid.x, pointGrid.y, boundingEdges);
+}
+
+} // namespace Terrains
