@@ -159,6 +159,14 @@ void World::Impl::SetTerrain(Terrain terrain)
         world_->removeSkeleton(terrain_);
     }
     terrain_ = Terrains::DartTerrainFromData(terrain);
+    terrain_->disableSelfCollisionCheck();
+    auto groundBodyNodes = terrain_->getBodyNodes();
+    for (auto &bodyNode : groundBodyNodes)
+    {
+        // Set some reasonably high friction coeff here such that we will always be limited by foot friction
+        // Allows for easier friction setting because we only set the foot friction
+        bodyNode->setFrictionCoeff(100);
+    }
     world_->addSkeleton(terrain_);
 }
 
@@ -216,5 +224,12 @@ void World::Impl::SetTerrainUrdf(const std::string &urdfPath)
         bodyNode->setFrictionCoeff(100);
     }
     world_->addSkeleton(terrain_);
+}
+
+void World::Impl::ApplyExternalWrench(std::shared_ptr<MiniCheetah> robot, Eigen::Matrix<double,6,1> wrench)
+{
+
+    robot->GetSkeleton()->getBodyNode("body")->setExtForce(Eigen::Vector3d{wrench[0], wrench[1], wrench[2]});
+    robot->GetSkeleton()->getBodyNode("body")->setExtTorque(Eigen::Vector3d{wrench[3], wrench[4], wrench[5]});
 }
 } // namespace DartRobots
