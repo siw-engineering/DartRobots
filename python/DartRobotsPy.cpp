@@ -158,7 +158,9 @@ PYBIND11_MODULE(DartRobotsPy, m)
              py::arg("color"), py::arg("radius"), py::arg("name"))
         .def("set_ball_translation", &World::SetBallTranslation, "Sets translation of a ball using its name",
              py::arg("name"), py::arg("translation"))
-        .def("delete_ball", &World::DeleteBall, "Deletes a ball using its name", py::arg("name"));
+        .def("delete_ball", &World::DeleteBall, "Deletes a ball using its name", py::arg("name"))
+        .def("apply_external_wrench", &World::ApplyExternalWrench, "Applies specified external forces to the robot body",
+            py::arg("robot"), py::arg("wrench"));
 
     py::class_<MiniCheetah, std::shared_ptr<MiniCheetah>>(m, "MiniCheetah")
         .def(py::init<>())

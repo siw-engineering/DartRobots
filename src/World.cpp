@@ -47,4 +47,10 @@ void World::DeleteBall(const std::string &name)
 {
     impl_->DeleteBall(name);
 }
+
+void World::ApplyExternalWrench(std::shared_ptr<MiniCheetah> robot, Eigen::Matrix<double,6,1> wrench)
+{
+    impl_->ApplyExternalWrench(robot, wrench);
+}
+
 } // namespace DartRobots

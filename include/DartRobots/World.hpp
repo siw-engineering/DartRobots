@@ -24,6 +24,7 @@ class World
                         const std::string &name = "marker");
     bool SetBallTranslation(const std::string &name, const Eigen::Vector3d &translation);
     void DeleteBall(const std::string &name);
+    void ApplyExternalWrench(std::shared_ptr<MiniCheetah> robot, Eigen::Matrix<double,6,1> wrench);
 
   private:
     class Impl;
