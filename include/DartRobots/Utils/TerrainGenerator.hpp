@@ -21,6 +21,8 @@ struct TerrainConfig
     double xSize, ySize = -1; // in meters
     double resolution = -1;   // size of a square in meters
 
+    double slope = 45; // slope in degrees
+
     // To be used with hill terrain
     float roughness = -1;
     float amplitude = -1;

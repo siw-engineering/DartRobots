@@ -45,9 +45,10 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
 
     Terrain terrain;
     double height{0};
-
+    double r=0;
     for (uint64_t i = 0; i < numVerticesX; ++i)
     {
+       r = 0;
         for (uint64_t j = 0; j < numVerticesY; ++j)
         {
 
@@ -63,7 +64,16 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
 
             // TODO : add roughness here
             height += config.roughness * uniformDist_(randomGen);
-            terrain.heights.emplace_back(height);
+            if (config.slope != 0)
+            {
+                auto h = (-config.xSize / 2) + r * sin(config.slope * (3.1415 / 180));
+                r += config.resolution;
+                terrain.heights.emplace_back(height + h + config.xSize / 2);
+            }
+            else
+            {
+                terrain.heights.emplace_back(height);
+            }
         }
     }
 
@@ -79,11 +89,18 @@ Terrain TerrainGenerator::generatePlane(const TerrainConfig &config)
     size_t numVerticesY = static_cast<uint64_t>(config.ySize / config.resolution) + 1;
 
     Terrain terrain;
-
-    for (size_t i = 0; i < numVerticesX * numVerticesY; ++i)
-    {
-        terrain.heights.emplace_back(0.0f);
+    double r = 0;
+    for(uint64_t i =0 ; i < numVerticesX; i++)
+    {   r = 0;
+        for(uint64_t j = 0; j < numVerticesY; j++)
+        {
+            auto h = (-config.xSize/2) + r * sin(config.slope * (3.1415 / 180));
+            terrain.heights.emplace_back(h + config.xSize/2);
+            r += config.resolution;
+        }
     }
+
+
     terrain.config = config;
 
     return terrain;

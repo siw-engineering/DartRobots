@@ -34,8 +34,8 @@ int main()
 
     auto terrain = generator.generate(config);
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
-        DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 0.5)});
-    world.SetRobot(robot);
+        DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 1.5)});
+//    world.SetRobot(robot);
 
     robot->SaveState(0);
     std::vector<std::string> ballNames{};
