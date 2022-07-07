@@ -44,6 +44,7 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
     }
 
     Terrain terrain;
+    std::vector<float> heights;
     double height{0};
     double r=0;
     for (uint64_t i = 0; i < numVerticesX; ++i)
@@ -68,15 +69,33 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
             {
                 auto h = (-config.xSize / 2) + r * sin(config.slope * (3.1415 / 180));
                 r += config.resolution;
-                terrain.heights.emplace_back(height + h + config.xSize / 2);
+                heights.emplace_back(height + h + config.xSize / 2);
             }
             else
             {
-                terrain.heights.emplace_back(height);
+                heights.emplace_back(height);
             }
         }
     }
 
+    if(config.slopeX)
+    {
+        Eigen::Map<Eigen::Matrix<float, -1, -1>> hmap(heights.data(), static_cast<int64_t>(numVerticesX),
+                                                      static_cast<int64_t>(numVerticesY));
+        hmap.transpose();
+
+        for (auto i = 0; i < numVerticesX; i++)
+        {
+            for (auto j = 0; j < numVerticesY; j++)
+            {
+                terrain.heights.emplace_back(hmap.row(i)(j));
+            }
+        }
+    }
+    else
+    {
+        terrain.heights = heights;
+    }
     terrain.config = config;
 
     return terrain;
@@ -89,17 +108,36 @@ Terrain TerrainGenerator::generatePlane(const TerrainConfig &config)
     size_t numVerticesY = static_cast<uint64_t>(config.ySize / config.resolution) + 1;
 
     Terrain terrain;
+    std::vector<float> heights;
     double r = 0;
     for(uint64_t i =0 ; i < numVerticesX; i++)
     {   r = 0;
         for(uint64_t j = 0; j < numVerticesY; j++)
         {
             auto h = (-config.xSize/2) + r * sin(config.slope * (3.1415 / 180));
-            terrain.heights.emplace_back(h + config.xSize/2);
+            heights.emplace_back(h + config.xSize/2);
             r += config.resolution;
         }
     }
 
+    if(config.slopeX)
+    {
+        Eigen::Map<Eigen::Matrix<float, -1, -1>> hmap(heights.data(), static_cast<int64_t>(numVerticesX),
+                                                      static_cast<int64_t>(numVerticesY));
+        hmap.transpose();
+
+        for (auto i = 0; i < numVerticesX; i++)
+        {
+            for (auto j = 0; j < numVerticesY; j++)
+            {
+                terrain.heights.emplace_back(hmap.row(i)(j));
+            }
+        }
+    }
+    else
+    {
+        terrain.heights = heights;
+    }
 
     terrain.config = config;
 
