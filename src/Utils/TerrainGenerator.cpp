@@ -1,5 +1,4 @@
 #include "TerrainGenerator.hpp"
-#include <Eigen/Dense>
 #include <math.h>
 
 
@@ -10,6 +9,42 @@ TerrainGenerator::TerrainGenerator()
 {
 
     uniformDist_ = std::uniform_real_distribution<float>(0.0, 1.0);
+}
+
+void TerrainGenerator::slopeTerrain(Eigen::MatrixXf &heights,
+                                    const TerrainConfig &config)
+{
+    int nVerticesX = (config.xSize / config.resolution) + 1;
+    int nVerticesY = (config.ySize / config.resolution) + 1;
+
+    VectorXf offsets;
+    offsets.resize(nVerticesX);
+    offsets.setZero();
+
+    float height = sin(config.slope * (3.1415 / 180));
+    for(int k = 0; k < nVerticesX; k++)
+        offsets(k) = (config.resolution*  k) * height;
+
+    if (!config.slopeX)
+        heights.rowwise() += offsets.transpose();
+    else
+        heights.colwise() += offsets;
+}
+
+void TerrainGenerator::toStdVec(const Eigen::MatrixXf &heights,
+                                const TerrainConfig &config,
+                                Terrain &terrain)
+{
+    int nVerticesX = (config.xSize / config.resolution) + 1;
+    int nVerticesY = (config.ySize / config.resolution) + 1;
+
+    int r, c = 0;
+    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
+    {
+        r = idx / nVerticesX;
+        c = idx % nVerticesY;
+        terrain.heights.emplace_back(heights.row(r)[c]);
+    }
 }
 
 Terrain TerrainGenerator::generate(const TerrainConfig &config)
@@ -42,29 +77,9 @@ Terrain TerrainGenerator::generatePlane(const TerrainConfig &config)
     heights.setZero();
 
     if (config.slope != 0)
-    {
-        VectorXf offsets;
-        offsets.resize(nVerticesX);
-        offsets.setZero();
+        slopeTerrain(heights, config);
 
-        float height = sin(config.slope * (3.1415 / 180));
-        for(int k = 0; k < nVerticesX; k++)
-            offsets(k) = (config.resolution*  k) * height;
-
-        if (!config.slopeX)
-            heights.rowwise() += offsets.transpose();
-        else
-            heights.colwise() += offsets;
-    }
-
-    // Convert into std::vector<float>
-    int r, c = 0;
-    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
-    {
-        r = idx / nVerticesX;
-        c = idx % nVerticesY;
-        terrain.heights.emplace_back(heights.row(r)[c]);
-    }
+    toStdVec(heights, config, terrain);
 
     terrain.config = config;
     return terrain;
@@ -109,29 +124,9 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
     }
 
     if (config.slope != 0)
-    {
-        VectorXf offsets;
-        offsets.resize(nVerticesX);
-        offsets.setZero();
+        slopeTerrain(heights, config);
 
-        float height = sin(config.slope * (3.1415 / 180));
-        for(int k = 0; k < nVerticesX; k++)
-            offsets(k) = (config.resolution*  k) * height;
-
-        if (!config.slopeX)
-            heights.rowwise() += offsets.transpose();
-        else
-            heights.colwise() += offsets;
-    }
-
-    // Convert into std::vector<float>
-    int r, c = 0;
-    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
-    {
-        r = idx / nVerticesX;
-        c = idx % nVerticesY;
-        terrain.heights.emplace_back(heights.row(r)[c]);
-    }
+    toStdVec(heights, config, terrain);
 
     terrain.config = config;
     return terrain;
@@ -181,29 +176,9 @@ Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
     }
 
     if (config.slope != 0)
-    {
-        VectorXf offsets;
-        offsets.resize(nVerticesX);
-        offsets.setZero();
+        slopeTerrain(heights, config);
 
-        float height = sin(config.slope * (3.1415 / 180));
-        for(int k = 0; k < nVerticesX; k++)
-            offsets(k) = (config.resolution*  k) * height;
-
-        if (!config.slopeX)
-            heights.rowwise() += offsets.transpose();
-        else
-            heights.colwise() += offsets;
-    }
-
-    // Convert into std::vector<float>
-    int r, c = 0;
-    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
-    {
-        r = idx / nVerticesX;
-        c = idx % nVerticesY;
-        terrain.heights.emplace_back(heights.row(r)[c]);
-    }
+    toStdVec(heights, config, terrain);
 
     terrain.config = config;
     return terrain;
@@ -265,14 +240,7 @@ Terrain TerrainGenerator::generateStairs(const TerrainConfig &config)
                       nVerticesY).setConstant(h);
     }
 
-    // Convert into std::vector<float>
-    int r, c = 0;
-    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
-    {
-        r = idx / nVerticesX;
-        c = idx % nVerticesY;
-        terrain.heights.emplace_back(heights.row(r)[c]);
-    }
+    toStdVec(heights, config, terrain);
 
     terrain.config = config;
     return terrain;

@@ -84,6 +84,7 @@ PYBIND11_MODULE(DartRobotsPy, m)
 
     py::enum_<TerrainType>(m, "TerrainType")
         .value("Invalid", TerrainType::Invalid)
+        .value("Stairs", TerrainType::Stairs)
         .value("Hills", TerrainType::Hills)
         .value("Steps", TerrainType::Steps)
         .value("Plane", TerrainType::Plane);

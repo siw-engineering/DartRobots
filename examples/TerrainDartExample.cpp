@@ -42,14 +42,14 @@ int main()
 
     robot->SaveState(0);
     std::vector<std::string> ballNames{};
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         // Change terrain
-        if (i % 3 == 0)
+        if (i % 4 == 0)
             config.terrainType = TerrainType::Hills;
-        else if (i % 3 == 1)
+        else if (i % 4 == 1)
             config.terrainType = TerrainType::Steps;
-        else if (i % 3 == 2)
+        else if (i % 4 == 2)
             config.terrainType = TerrainType::Stairs;
         else
             config.terrainType = TerrainType::Plane;
@@ -78,7 +78,7 @@ int main()
         {
             robot->SetJointCommands(Eigen::Matrix<double, 12, 1>::Zero());
             world.Step(1);
-            auto footPos = robot->GetFootPositions();
+//            auto footPos = robot->GetFootPositions();
             world.Render();
         }
         robot->LoadState(0);

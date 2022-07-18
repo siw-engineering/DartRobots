@@ -2,6 +2,7 @@
 #define TERRAINGENERATOR_TERRAINGENERATOR_H
 
 #include "PerlinNoise.hpp"
+#include <Eigen/Dense>
 #include <random>
 #include <vector>
 
@@ -52,12 +53,19 @@ class TerrainGenerator
     // Returns an instance of Terrain based on provided configuration
     Terrain generate(const TerrainConfig &config);
 
+
+
+  protected:
     Terrain generateHills(const TerrainConfig &config);
     Terrain generateSteps(const TerrainConfig &config);
     Terrain generatePlane(const TerrainConfig &config);
     Terrain generateStairs(const TerrainConfig &config);
+    void slopeTerrain(Eigen::MatrixXf &heights,
+                      const TerrainConfig &config);
 
-  protected:
+    void toStdVec(const Eigen::MatrixXf &heights,
+                  const TerrainConfig &config,
+                  Terrain &terrain);
     std::uniform_real_distribution<float> uniformDist_;
 };
 }
