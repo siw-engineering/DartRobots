@@ -2,6 +2,7 @@
 #define TERRAINGENERATOR_TERRAINGENERATOR_H
 
 #include "PerlinNoise.hpp"
+#include <Eigen/Dense>
 #include <random>
 #include <vector>
 
@@ -10,6 +11,7 @@ enum struct TerrainType
     Invalid = 0,
     Hills,
     Steps,
+    Stairs,
     Plane
 };
 
@@ -20,6 +22,9 @@ struct TerrainConfig
 
     double xSize, ySize = -1; // in meters
     double resolution = -1;   // size of a square in meters
+
+    double slope = 0; // slope in degrees
+    bool slopeX = true; // slopes about x-axis if true , else slopes about y-axis
 
     // To be used with hill terrain
     float roughness = -1;
@@ -48,11 +53,19 @@ class TerrainGenerator
     // Returns an instance of Terrain based on provided configuration
     Terrain generate(const TerrainConfig &config);
 
+
+
+  protected:
     Terrain generateHills(const TerrainConfig &config);
     Terrain generateSteps(const TerrainConfig &config);
     Terrain generatePlane(const TerrainConfig &config);
+    Terrain generateStairs(const TerrainConfig &config);
+    void slopeTerrain(Eigen::MatrixXf &heights,
+                      const TerrainConfig &config);
 
-  protected:
+    void toStdVec(const Eigen::MatrixXf &heights,
+                  const TerrainConfig &config,
+                  Terrain &terrain);
     std::uniform_real_distribution<float> uniformDist_;
 };
 }

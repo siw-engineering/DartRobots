@@ -32,20 +32,25 @@ int main()
     config.stepWidth = 0.2;
     config.stepHeight = 0.1;
 
+    config.slopeX = true;
+    config.slope = 20; // degrees
+
     auto terrain = generator.generate(config);
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
-        DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 0.5)});
-    world.SetRobot(robot);
+        DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 1.5)});
+//    world.SetRobot(robot);
 
     robot->SaveState(0);
     std::vector<std::string> ballNames{};
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         // Change terrain
-        if (i % 3 == 0)
+        if (i % 4 == 0)
             config.terrainType = TerrainType::Hills;
-        else if (i % 3 == 1)
+        else if (i % 4 == 1)
             config.terrainType = TerrainType::Steps;
+        else if (i % 4 == 2)
+            config.terrainType = TerrainType::Stairs;
         else
             config.terrainType = TerrainType::Plane;
         terrain = generator.generate(config);
@@ -73,7 +78,7 @@ int main()
         {
             robot->SetJointCommands(Eigen::Matrix<double, 12, 1>::Zero());
             world.Step(1);
-            auto footPos = robot->GetFootPositions();
+//            auto footPos = robot->GetFootPositions();
             world.Render();
         }
         robot->LoadState(0);
