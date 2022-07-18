@@ -10,6 +10,7 @@ enum struct TerrainType
     Invalid = 0,
     Hills,
     Steps,
+    Stairs,
     Plane
 };
 
@@ -54,6 +55,7 @@ class TerrainGenerator
     Terrain generateHills(const TerrainConfig &config);
     Terrain generateSteps(const TerrainConfig &config);
     Terrain generatePlane(const TerrainConfig &config);
+    Terrain generateStairs(const TerrainConfig &config);
 
   protected:
     std::uniform_real_distribution<float> uniformDist_;

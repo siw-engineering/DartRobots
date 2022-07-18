@@ -38,7 +38,7 @@ int main()
     auto terrain = generator.generate(config);
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
         DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 1.5)});
-    world.SetRobot(robot);
+//    world.SetRobot(robot);
 
     robot->SaveState(0);
     std::vector<std::string> ballNames{};
@@ -49,6 +49,8 @@ int main()
             config.terrainType = TerrainType::Hills;
         else if (i % 3 == 1)
             config.terrainType = TerrainType::Steps;
+        else if (i % 3 == 2)
+            config.terrainType = TerrainType::Stairs;
         else
             config.terrainType = TerrainType::Plane;
         terrain = generator.generate(config);
