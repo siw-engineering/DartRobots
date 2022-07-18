@@ -32,6 +32,8 @@ int main()
     config.stepWidth = 0.2;
     config.stepHeight = 0.1;
 
+    config.slopeX = true;
+
     auto terrain = generator.generate(config);
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
         DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 1.5)});
