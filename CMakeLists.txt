@@ -55,7 +55,7 @@ if (PACKAGE_PYTHON)
     set(CMAKE_INSTALL_FULL_DATADIR ${CMAKE_INSTALL_FULL_DATADIR_TEMP})
 endif ()
 
-add_library(TerrainGenerator  src/Utils/TerrainGenerator.cpp src/Utils/PerlinNoise.cpp src/Utils/TerrainHelpers.cpp src/Utils/temp.cpp)
+add_library(TerrainGenerator  src/Utils/TerrainGenerator.cpp src/Utils/PerlinNoise.cpp src/Utils/TerrainHelpers.cpp)
 set_target_properties(TerrainGenerator PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION TRUE
         POSITION_INDEPENDENT_CODE ON)

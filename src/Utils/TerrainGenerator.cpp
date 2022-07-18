@@ -32,22 +32,23 @@ Terrain TerrainGenerator::generatePlane(const TerrainConfig &config)
 {
     Terrain terrain;
 
-    size_t nVerticesX = static_cast<uint64_t>(config.xSize / config.resolution) + 1;
-    size_t nVerticesY = static_cast<uint64_t>(config.ySize / config.resolution) + 1;
+    int nVerticesX = static_cast<uint64_t>(config.xSize / config.resolution) + 1;
+    int nVerticesY = static_cast<uint64_t>(config.ySize / config.resolution) + 1;
 
-    VectorXd offsets;
-    offsets.resize(nVerticesX);
-    offsets.setZero();
-
-    MatrixXd heights;
+    MatrixXf heights;
     heights.resize(nVerticesX, nVerticesY);
+    heights.setZero();
 
     if (config.slope != 0)
     {
+        VectorXf offsets;
+        offsets.resize(nVerticesX);
+        offsets.setZero();
+
         for(int k = 0; k < nVerticesX; k++)
             offsets(k) = ((config.resolution* k) * sin(config.slope * (3.1415 / 180)));
 
-        if (config.slopeX)
+        if (!config.slopeX)
             heights.rowwise() += offsets.transpose();
         else
             heights.colwise() += offsets;
@@ -70,8 +71,8 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
 {
     Terrain terrain;
 
-    const size_t nVerticesX = static_cast<size_t>(config.xSize / config.resolution) + 1;
-    const size_t nVerticesY = static_cast<size_t>(config.ySize / config.resolution) + 1;
+    const int nVerticesX = static_cast<size_t>(config.xSize / config.resolution) + 1;
+    const int nVerticesY = static_cast<size_t>(config.ySize / config.resolution) + 1;
 
     int nSegmentsX = static_cast<int32_t>(config.xSize / config.stepWidth);
     int nSegmentsY = static_cast<int32_t>(config.ySize / config.stepWidth);
@@ -91,7 +92,7 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
         randomGen = std::mt19937(rd());
     }
 
-    double height;
+    double height = 0;
     for (int64_t i = 0; i < nSegmentsX; ++i)
     {
         for (int64_t j = 0; j < nSegmentsY; ++j)
@@ -112,7 +113,7 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
         for(int k = 0; k < nVerticesX; k++)
             offsets(k) = ((config.resolution* k) * sin(config.slope * (3.1415 / 180)));
 
-        if (config.slopeX)
+        if (!config.slopeX)
             heights.rowwise() += offsets.transpose();
         else
             heights.colwise() += offsets;
@@ -124,6 +125,77 @@ Terrain TerrainGenerator::generateSteps(const TerrainConfig &config)
     {
         r = i / nVerticesX;
         c = i % nVerticesY;
+        terrain.heights.emplace_back(heights.row(r)[c]);
+    }
+
+    terrain.config = config;
+    return terrain;
+
+}
+
+Terrain TerrainGenerator::generateHills(const TerrainConfig &config)
+{
+    Terrain terrain;
+
+    int nVerticesX = static_cast<uint64_t>(config.xSize / config.resolution) + 1;
+    int nVerticesY = static_cast<uint64_t>(config.ySize / config.resolution) + 1;
+
+    MatrixXf heights;
+    heights.resize(nVerticesX, nVerticesY);
+    heights.setZero();
+
+    PerlinNoise noiseGenerator;
+    std::default_random_engine rd;
+    auto randomGen = std::mt19937(rd());
+
+    if (config.seed != -1)
+    {
+        noiseGenerator = PerlinNoise(config.seed);
+        rd = std::default_random_engine(config.seed);
+        randomGen = std::mt19937(rd());
+    }
+
+    int i,j = 0;
+    for(int idx = 0; idx < nVerticesY * nVerticesY; idx++)
+    {
+        i = idx / nVerticesX;
+        j = idx % nVerticesY;
+        double amp, freq = 0;
+        float height = 0;
+
+        for(int nOctave = 0; nOctave < config.numOctaves; nOctave++)
+        {
+            amp = config.amplitude / pow(2, nOctave);
+            freq = config.frequency * pow(2, nOctave);
+
+            height += amp * noiseGenerator.noise(i * freq, j * freq, 0.1);
+        }
+        height += config.roughness * uniformDist_(randomGen);
+
+        heights.row(i)[j] = height;
+    }
+
+    if (config.slope != 0)
+    {
+        VectorXf offsets;
+        offsets.resize(nVerticesX);
+        offsets.setZero();
+
+        for(int k = 0; k < nVerticesX; k++)
+            offsets(k) = ((config.resolution* k) * sin(config.slope * (3.1415 / 180)));
+
+        if (!config.slopeX)
+            heights.rowwise() += offsets.transpose();
+        else
+            heights.colwise() += offsets;
+    }
+
+    // Convert into std::vector<float>
+    int r, c = 0;
+    for(int idx = 0; idx < nVerticesX * nVerticesY; idx++)
+    {
+        r = idx / nVerticesX;
+        c = idx % nVerticesY;
         terrain.heights.emplace_back(heights.row(r)[c]);
     }
 

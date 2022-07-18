@@ -21,7 +21,7 @@ struct TerrainConfig
     double xSize, ySize = -1; // in meters
     double resolution = -1;   // size of a square in meters
 
-    double slope = 45; // slope in degrees
+    double slope = 0; // slope in degrees
     bool slopeX = true; // slopes about x-axis if true , else slopes about y-axis
 
     // To be used with hill terrain

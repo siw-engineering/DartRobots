@@ -33,11 +33,12 @@ int main()
     config.stepHeight = 0.1;
 
     config.slopeX = true;
+    config.slope = 20; // degrees
 
     auto terrain = generator.generate(config);
     auto robot = std::make_shared<DartRobots::MiniCheetah>(
         DartRobots::MiniCheetahConfig{.spawnPos = Eigen::Vector3d(0.5, 0.0, 1.5)});
-//    world.SetRobot(robot);
+    world.SetRobot(robot);
 
     robot->SaveState(0);
     std::vector<std::string> ballNames{};
